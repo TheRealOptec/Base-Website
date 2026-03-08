@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! C:\msys64\ucrt64\bin\python.exe
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
