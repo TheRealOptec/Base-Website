@@ -1,13 +1,13 @@
-import type { ISimplesErrorChannel } from './ISimplesErrorChanel.js';
+import { ConsoleErrorChannel } from './error_handling/ConsoleErrorChannel.js';
+import type { ISimplesErrorChannel } from './ISimplesErrorChannel.js';
 import type { ISimplesNode } from './ISimplesNode.js';
 import { SimplesParser } from './SimplesParser.js';
-import {} from './NodeInit.js'; // Initialise compiler nodes
 
 export class SimplesCompiler {
 
     private static compilerNodes: Record<string, ISimplesNode> = {};
     // The standard error handler for the simples complier
-    private static stdErr: ISimplesErrorChannel;
+    private static stdErr: ISimplesErrorChannel = new ConsoleErrorChannel();
 
     public static addCompilerNode(name: string, compNode: ISimplesNode): void {
         this.compilerNodes[name] = compNode;

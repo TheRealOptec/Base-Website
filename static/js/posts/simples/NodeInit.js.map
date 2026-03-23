@@ -1,0 +1,1 @@
+{"version":3,"file":"NodeInit.js","sourceRoot":"","sources":["../../../ts/src/posts/simples/NodeInit.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,MAAM,kBAAkB,CAAC;AACzC,OAAO,EAAE,QAAQ,EAAE,MAAM,qBAAqB,CAAC;AAE/C,6CAA6C;AAC7C,MAAM,KAAK,GAAG;IACV,QAAQ,CAAC,WAAW,EAAE;IACtB,KAAK,CAAC,WAAW,EAAE;CACtB,CAAC"}

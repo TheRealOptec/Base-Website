@@ -1,17 +1,17 @@
 import type { ISimplesNode } from "../ISimplesNode.js";
 import { SimplesCompiler } from "../SimplesCompiler.js";
 
-export class PNode implements ISimplesNode {
+export class TextNode implements ISimplesNode {
 
-    private static instance: PNode|null = null;
+    private static instance: TextNode|null = null;
 
     private constructor() {
-        SimplesCompiler.addCompilerNode("p", this);
+        SimplesCompiler.addCompilerNode("#text", this);
     }
 
     public static getInstance(): ISimplesNode {
-        if(PNode.instance === null) return new PNode();
-        return PNode.instance;
+        if(TextNode.instance === null) return new TextNode();
+        return TextNode.instance;
     }
 
     public compile(frag: DocumentFragment, node: ChildNode): DocumentFragment {
