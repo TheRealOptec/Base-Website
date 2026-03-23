@@ -1,12 +1,17 @@
 import type { ISimplesErrorChannel } from './ISimplesErrorChanel.js';
 import type { ISimplesNode } from './ISimplesNode.js';
 import { SimplesParser } from './SimplesParser.js';
+import {} from './NodeInit.js'; // Initialise compiler nodes
 
 export class SimplesCompiler {
 
     private static compilerNodes: Record<string, ISimplesNode> = {};
     // The standard error handler for the simples complier
     private static stdErr: ISimplesErrorChannel;
+
+    public static addCompilerNode(name: string, compNode: ISimplesNode): void {
+        this.compilerNodes[name] = compNode;
+    }
 
     public static compile(content: string): DocumentFragment {
         
@@ -35,5 +40,3 @@ export class SimplesCompiler {
         return frag;
     }
 }
-
-SimplesCompiler.compile("<a><b></b><b></b><a><c></c></a></a>");
