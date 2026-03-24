@@ -10,7 +10,7 @@ const frag = SimplesCompiler.compile(`
             <news
                 topic="Apple"
                 from="2026-03-24"
-                sortby="popularity&"
+                sortby="popularity"
             />
         </embed>
     </p>

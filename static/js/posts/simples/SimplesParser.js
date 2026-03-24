@@ -13,6 +13,7 @@ export class SimplesParser {
     static trimTagsides(content) {
         content = this.replaceAllChar(content, "> ", ">");
         content = this.replaceAllChar(content, " <", "<");
+        content = this.replaceAllChar(content, " />", "/>");
         return content;
     }
     static trimInput(content) {

@@ -19,6 +19,7 @@ export class SimplesParser {
     private static trimTagsides(content: string): string {
         content = this.replaceAllChar(content, "> ", ">");
         content = this.replaceAllChar(content, " <", "<");
+        content = this.replaceAllChar(content, " />", "/>");
         return content;
     }
 
