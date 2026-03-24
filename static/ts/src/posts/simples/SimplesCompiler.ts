@@ -30,13 +30,29 @@ export class SimplesCompiler {
         }
         return frag;
     }
+
+    public static getCompilerNode(name: string): ISimplesNode | undefined {
+        return this.compilerNodes[name];
+    }
+
+    public static compileNodeChildren(fragHead: Node, node: Node): void {
+        for(let child of node.childNodes) {
+            const compNode = SimplesCompiler.getCompilerNode(child.nodeName);
+            if(compNode === undefined) {
+                this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
+                return;
+            }
+            compNode.compile(fragHead, child);
+        }
+    }
+
     private static interpretNode(frag: DocumentFragment, node: ChildNode): DocumentFragment {
         const compNode: ISimplesNode | undefined = this.compilerNodes[node.nodeName];
         if(compNode === undefined) {
             this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
             return frag;
         }
-        frag = compNode.compile(frag, node);
+        compNode.compile(frag, node);
         return frag;
     }
 }

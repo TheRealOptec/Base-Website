@@ -6,6 +6,8 @@ export declare class SimplesCompiler {
     static compile(content: string): DocumentFragment;
     private static interpretXML;
     private static interpretNodeList;
+    static getCompilerNode(name: string): ISimplesNode | undefined;
+    static compileNodeChildren(fragHead: Node, node: Node): void;
     private static interpretNode;
 }
 //# sourceMappingURL=SimplesCompiler.d.ts.map

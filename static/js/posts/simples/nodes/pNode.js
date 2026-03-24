@@ -8,9 +8,10 @@ export class PNode {
             return new PNode();
         return PNode.instance;
     }
-    compile(frag, node) {
-        console.log(node.textContent);
-        return frag;
+    compile(fragHead, node) {
+        const pElem = document.createElement("p");
+        SimplesCompiler.compileNodeChildren(pElem, node);
+        fragHead.appendChild(pElem);
     }
 }
 PNode.instance = null;

@@ -3,6 +3,6 @@ export declare class TextNode implements ISimplesNode {
     private static instance;
     private constructor();
     static getInstance(): ISimplesNode;
-    compile(frag: DocumentFragment, node: ChildNode): DocumentFragment;
+    compile(fragHead: Node, node: ChildNode): void;
 }
 //# sourceMappingURL=textNode.d.ts.map

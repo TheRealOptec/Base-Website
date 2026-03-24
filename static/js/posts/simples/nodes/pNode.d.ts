@@ -3,6 +3,6 @@ export declare class PNode implements ISimplesNode {
     private static instance;
     private constructor();
     static getInstance(): ISimplesNode;
-    compile(frag: DocumentFragment, node: ChildNode): DocumentFragment;
+    compile(fragHead: Node, node: ChildNode): void;
 }
 //# sourceMappingURL=pNode.d.ts.map

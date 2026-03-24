@@ -14,8 +14,8 @@ export class TextNode implements ISimplesNode {
         return TextNode.instance;
     }
 
-    public compile(frag: DocumentFragment, node: ChildNode): DocumentFragment {
-        console.log(node.textContent);
-        return frag;
+    public compile(fragHead: Node, node: ChildNode): void {
+        if(fragHead.textContent == null) fragHead.textContent = node.textContent;
+        else fragHead.textContent += node.textContent;
     }
 }

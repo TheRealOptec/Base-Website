@@ -8,9 +8,11 @@ export class TextNode {
             return new TextNode();
         return TextNode.instance;
     }
-    compile(frag, node) {
-        console.log(node.textContent);
-        return frag;
+    compile(fragHead, node) {
+        if (fragHead.textContent == null)
+            fragHead.textContent = node.textContent;
+        else
+            fragHead.textContent += node.textContent;
     }
 }
 TextNode.instance = null;

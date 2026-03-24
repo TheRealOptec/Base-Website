@@ -17,13 +17,26 @@ export class SimplesCompiler {
         }
         return frag;
     }
+    static getCompilerNode(name) {
+        return this.compilerNodes[name];
+    }
+    static compileNodeChildren(fragHead, node) {
+        for (let child of node.childNodes) {
+            const compNode = SimplesCompiler.getCompilerNode(child.nodeName);
+            if (compNode === undefined) {
+                this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
+                return;
+            }
+            compNode.compile(fragHead, child);
+        }
+    }
     static interpretNode(frag, node) {
         const compNode = this.compilerNodes[node.nodeName];
         if (compNode === undefined) {
             this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
             return frag;
         }
-        frag = compNode.compile(frag, node);
+        compNode.compile(frag, node);
         return frag;
     }
 }
