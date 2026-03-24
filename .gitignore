@@ -25,3 +25,11 @@ dist-ssr
 
 # Python
 *.pyc
+
+# uv
+*.toml
+uv.lock
+.python-version
+
+# API Keys
+*.env
