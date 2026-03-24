@@ -17,5 +17,7 @@ const frag = SimplesCompiler.compile(`
 </simples>
 `);
 document.body.appendChild(frag);
-ApiHandler.requestApi(json => console.log(json));
+ApiHandler.makeReq(json => console.log(json), {
+    "test": "Hello DJANGO!"
+});
 //# sourceMappingURL=testing_main.js.map

@@ -19,4 +19,6 @@ const frag = SimplesCompiler.compile(`
 `);
 document.body.appendChild(frag);
 
-ApiHandler.requestApi(json => console.log(json));
+ApiHandler.makeReq(json => console.log(json), {
+    "test": "Hello DJANGO!"
+});

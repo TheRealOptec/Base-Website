@@ -1,5 +1,7 @@
 export declare class ApiHandler {
     private static API_ADDR;
-    static requestApi(apiFn: ((value: any) => any)): void;
+    private static getParamsToUrlOptions;
+    private static createGetUrl;
+    static makeReq(apiFn: ((value: any) => any), params?: Record<string, any>): void;
 }
 //# sourceMappingURL=ApiHandler.d.ts.map
