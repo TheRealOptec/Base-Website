@@ -24,7 +24,7 @@ export class SimplesCompiler {
         for (let child of node.childNodes) {
             const compNode = SimplesCompiler.getCompilerNode(child.nodeName);
             if (compNode === undefined) {
-                this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
+                this.stdErr.reportError(`${child.nodeName} is not a defined Simples element`);
                 return;
             }
             compNode.compile(fragHead, child);

@@ -3,12 +3,16 @@ import {} from './posts/simples/NodeInit.js'; // Initialise compiler nodes
 
 const frag = SimplesCompiler.compile(`
 <simples>
+    <h>My First Post!</h>
     <p>
-        Testing, testing, 123
-        <p>Inside!</p>
-    </p>
-    <p>
-        Ourside!
+        Here's some music I like:
+        <embed>
+            <news
+                topic="Apple"
+                from="2026-03-24"
+                sortby="popularity&"
+            />
+        </embed>
     </p>
 </simples>
 `);

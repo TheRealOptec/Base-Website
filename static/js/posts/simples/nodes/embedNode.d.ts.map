@@ -1,0 +1,1 @@
+{"version":3,"file":"embedNode.d.ts","sourceRoot":"","sources":["../../../../ts/src/posts/simples/nodes/embedNode.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,oBAAoB,CAAC;AAGvD,qBAAa,SAAU,YAAW,YAAY;IAE1C,OAAO,CAAC,MAAM,CAAC,QAAQ,CAAwB;IAE/C,OAAO;WAIO,WAAW,IAAI,YAAY;IAKlC,OAAO,CAAC,QAAQ,EAAE,IAAI,EAAE,IAAI,EAAE,SAAS,GAAG,IAAI;CAKxD"}
