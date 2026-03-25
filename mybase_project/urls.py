@@ -20,4 +20,6 @@ from mybase import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('mybase/', include('mybase.urls')),
+    path('logout/', views.user_logout, name='user_logout'),
+    path('login/', views.user_login, name='user_login'),
 ]

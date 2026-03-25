@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.urls import reverse
 from mybase.forms import UserForm, UserProfileForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate,login,logout
 
 from .apis.api_handler import ApiHandler
 
@@ -45,6 +48,14 @@ def sign_up(request):
         "user_form": user_form,
         "profile_form": profile_form
     })
+
+def user_login(request):
+    return render(request, 'mybase/login.html', content_type={})
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect(reverse('mybase:home'))
 
 def api_handler(request):
     return ApiHandler.handleReq(request)
