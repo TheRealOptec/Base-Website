@@ -12,6 +12,8 @@ const frag = SimplesCompiler.compile(`
                 <q>Microsoft</q>
                 <from>2026-03-24</from>
                 <top>25</top>
+                <sortBy>popularity</sortBy>
+                <language>en</language>
             </news>
         </embed>
     </p>
