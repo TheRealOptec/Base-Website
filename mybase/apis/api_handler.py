@@ -32,10 +32,11 @@ class ApiHandler:
             return JsonResponse(ApiHandler.createFailureJson(1))
         # Test vvv
         api_interface = ApiHandler.api_interfaces[apiReqType]
+        print(f"GET: {request.GET.dict()}")
         response = reqs.get(api_interface.getUrl(request.GET.dict()), params=request.GET.dict())
         status = api_interface.checkStatus(response)
         if not status:
             # Just for logging
-            print("Api request failed")
+            print(f"Api request failed: {response.json()}")
             return JsonResponse(ApiHandler.createFailureJson(1))
         return JsonResponse(ApiHandler.createSuccessJson(response))

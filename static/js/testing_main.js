@@ -19,6 +19,7 @@ const frag = SimplesCompiler.compile(`
 document.body.appendChild(frag);
 ApiHandler.makeReq(json => console.log(json), {
     "api": "news",
-    "msg": "Hello DJANGO!"
+    "q": "Apple",
+    "from": "2026-03-24"
 });
 //# sourceMappingURL=testing_main.js.map
