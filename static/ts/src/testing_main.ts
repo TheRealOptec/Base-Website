@@ -9,17 +9,12 @@ const frag = SimplesCompiler.compile(`
         Here's some articles about Apple:
         <embed>
             <news>
-                <q>Apple</q>
+                <q>Microsoft</q>
                 <from>2026-03-24</from>
+                <top>25</top>
             </news>
         </embed>
     </p>
 </simples>
 `);
 document.body.appendChild(frag);
-
-ApiHandler.makeReq(json => console.log(json), {
-    "api": "news",
-    "q": "Apple",
-    "from": "2026-03-24"
-});

@@ -1,1 +1,1 @@
-{"version":3,"file":"ISimplesNode.d.ts","sourceRoot":"","sources":["../../../ts/src/posts/simples/ISimplesNode.ts"],"names":[],"mappings":"AACA,MAAM,WAAW,YAAY;IACzB,OAAO,CAAC,QAAQ,EAAE,IAAI,EAAE,IAAI,EAAE,IAAI,GAAG,IAAI,CAAC;CAC7C"}
+{"version":3,"file":"ISimplesNode.d.ts","sourceRoot":"","sources":["../../../ts/src/posts/simples/ISimplesNode.ts"],"names":[],"mappings":"AACA,MAAM,WAAW,YAAY;IACzB,OAAO,CAAC,QAAQ,EAAE,IAAI,EAAE,IAAI,EAAE,IAAI,EAAE,MAAM,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAAC,CAAC,GAAG,IAAI,CAAC;CAC7F"}

@@ -1,32 +1,33 @@
+import { CompNodeParent } from "../CompNodeParent.js";
 import type { ISimplesNode } from "../ISimplesNode.js";
 import { SimplesCompiler } from "../SimplesCompiler.js";
 
-export class EmbedNode implements ISimplesNode {
+export class EmbedNode extends CompNodeParent implements ISimplesNode {
 
     private static instance: EmbedNode|null = null;
 
-    private static embedNodes: Record<string,ISimplesNode> = {};
-
     private constructor() {
+        super();
         SimplesCompiler.addCompilerNode("embed", this);
     }
 
-    public static getInstance(): ISimplesNode {
-        if(EmbedNode.instance === null) return new EmbedNode();
+    public static getInstance(): ISimplesNode|null {
+        if(EmbedNode.instance === null) this.instance = new EmbedNode();
         return EmbedNode.instance;
     }
 
-    public static addEmbedNode(name: string, node: ISimplesNode): void {
-        this.embedNodes[name] = node;
+    private compileEmbedNode(fragHead: Node, node: Node) {
+        const embedNode = EmbedNode.compNodes[node.nodeName];
+        if(embedNode === undefined) {
+            SimplesCompiler.reportError(`Not embed available with id ${node.nodeName}`);
+            return;
+        }
+        embedNode.compile(fragHead, node, {});
     }
 
-    private compileEmbedNode(node: Node) {
-        const embedNode = EmbedNode.embedNodes[node.nodeName];
-    }
-
-    public compile(fragHead: Node, node: Node): void {
+    public compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void {
         for(let child of node.childNodes) {
-            this.compileEmbedNode(child);
+            this.compileEmbedNode(fragHead, child);
         }
     }
 }

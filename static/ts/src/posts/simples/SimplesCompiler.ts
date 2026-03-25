@@ -42,7 +42,7 @@ export class SimplesCompiler {
                 this.stdErr.reportError(`${child.nodeName} is not a defined Simples element`);
                 return;
             }
-            compNode.compile(fragHead, child);
+            compNode.compile(fragHead, child, {});
         }
     }
 
@@ -52,7 +52,11 @@ export class SimplesCompiler {
             this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
             return frag;
         }
-        compNode.compile(frag, node);
+        compNode.compile(frag, node, {});
         return frag;
+    }
+
+    public static reportError(msg: string): void {
+        this.stdErr.reportError(msg);
     }
 }

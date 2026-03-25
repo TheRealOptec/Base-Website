@@ -9,5 +9,6 @@ export declare class SimplesCompiler {
     static getCompilerNode(name: string): ISimplesNode | undefined;
     static compileNodeChildren(fragHead: Node, node: Node): void;
     private static interpretNode;
+    static reportError(msg: string): void;
 }
 //# sourceMappingURL=SimplesCompiler.d.ts.map
