@@ -5,13 +5,12 @@ const frag = SimplesCompiler.compile(`
 <simples>
     <h>My First Post!</h>
     <p>
-        Here's some music I like:
+        Here's some articles about Apple:
         <embed>
-            <news
-                topic="Apple"
-                from="2026-03-24"
-                sortby="popularity"
-            />
+            <news>
+                <q>Apple</q>
+                <from>2026-03-24</from>
+            </news>
         </embed>
     </p>
 </simples>

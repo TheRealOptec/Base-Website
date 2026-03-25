@@ -14,7 +14,7 @@ export class HNode implements ISimplesNode {
         return HNode.instance;
     }
 
-    public compile(fragHead: Node, node: ChildNode): void {
+    public compile(fragHead: Node, node: Node): void {
         const hElem = document.createElement("h1");
         SimplesCompiler.compileNodeChildren(hElem, node);
         fragHead.appendChild(hElem);

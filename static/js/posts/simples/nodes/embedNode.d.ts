@@ -6,6 +6,6 @@ export declare class EmbedNode implements ISimplesNode {
     static getInstance(): ISimplesNode;
     static addEmbedNode(name: string, node: ISimplesNode): void;
     private compileEmbedNode;
-    compile(fragHead: Node, node: ChildNode): void;
+    compile(fragHead: Node, node: Node): void;
 }
 //# sourceMappingURL=embedNode.d.ts.map

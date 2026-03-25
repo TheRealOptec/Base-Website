@@ -17,6 +17,6 @@ To handle api related tasks, we use the **\<embed\>** tag. The **\<embed\>** wil
 ## Embed Options
 
 ### News
-Major news headlines and articles can be embedded with the use of the **\<news\>** embed tag. This tag should not contain any content within it. Instead, API call arguments are specified in the tag's attributes.
+Major news headlines and articles can be embedded with the use of the **\<news\>** embed tag. The arguments for an API call are contained within the internal tags (these are specific to specific APIs).
 
 #### News Options

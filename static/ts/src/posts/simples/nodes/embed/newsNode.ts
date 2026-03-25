@@ -14,7 +14,7 @@ export class NewsNode implements ISimplesNode {
         return NewsNode.instance;
     }
 
-    public compile(fragHead: Node, node: ChildNode): void {
-
+    public compile(fragHead: Node, node: Node): void {
+        
     }
 }

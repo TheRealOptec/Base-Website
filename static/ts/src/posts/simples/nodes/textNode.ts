@@ -14,7 +14,7 @@ export class TextNode implements ISimplesNode {
         return TextNode.instance;
     }
 
-    public compile(fragHead: Node, node: ChildNode): void {
+    public compile(fragHead: Node, node: Node): void {
         if(fragHead.textContent == null) fragHead.textContent = node.textContent;
         else fragHead.textContent += node.textContent;
     }

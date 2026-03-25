@@ -24,7 +24,7 @@ export class EmbedNode implements ISimplesNode {
         const embedNode = EmbedNode.embedNodes[node.nodeName];
     }
 
-    public compile(fragHead: Node, node: ChildNode): void {
+    public compile(fragHead: Node, node: Node): void {
         for(let child of node.childNodes) {
             this.compileEmbedNode(child);
         }

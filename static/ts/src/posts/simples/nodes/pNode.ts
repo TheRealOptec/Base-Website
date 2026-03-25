@@ -14,7 +14,7 @@ export class PNode implements ISimplesNode {
         return PNode.instance;
     }
 
-    public compile(fragHead: Node, node: ChildNode): void {
+    public compile(fragHead: Node, node: Node): void {
         const pElem = document.createElement("p");
         SimplesCompiler.compileNodeChildren(pElem, node);
         fragHead.appendChild(pElem);
