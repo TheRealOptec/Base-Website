@@ -26,8 +26,7 @@ class Page(models.Model):
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    website = models.URLField(blank=True)
-    picture = models.ImageField(upload_to='profile_image', blank=True)
+    pfpic = models.ImageField(upload_to='profile_image', blank=True)
 
     def __str__(self):
         return self.user.username
