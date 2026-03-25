@@ -4,10 +4,23 @@ from .news_api import NewsApi
 
 class ApiHandler:
     API_GET_REQ_TYPE = "api"
+    API_STATUS_KEY = "mybase_api_status"
 
     api_interfaces = {
         "news": NewsApi()
     }
+
+    @staticmethod
+    def createFailureJson(code):
+        json = dict()
+        json[ApiHandler.API_STATUS_KEY] = code
+        return json
+
+    @staticmethod
+    def createSuccessJson(response):
+        json = response.json()
+        json[ApiHandler.API_STATUS_KEY] = 0
+        return json
 
     @staticmethod
     def handleReq(request):
@@ -16,7 +29,13 @@ class ApiHandler:
         apiReqType = request.GET.get(ApiHandler.API_GET_REQ_TYPE, None)
         if apiReqType is None:
             print(f"No api request type given")
-            return JsonResponse({})
+            return JsonResponse(ApiHandler.createFailureJson(1))
         # Test vvv
-        response = reqs.get(ApiHandler.api_interfaces[apiReqType].getUrl(request.GET.dict()), params=request.GET.dict())
-        return JsonResponse(response.json())
+        api_interface = ApiHandler.api_interfaces[apiReqType]
+        response = reqs.get(api_interface.getUrl(request.GET.dict()), params=request.GET.dict())
+        status = api_interface.checkStatus(response)
+        if not status:
+            # Just for logging
+            print("Api request failed")
+            return JsonResponse(ApiHandler.createFailureJson(1))
+        return JsonResponse(ApiHandler.createSuccessJson(response))

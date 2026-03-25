@@ -1,4 +1,6 @@
 
 class ApiInterface:
     def getUrl(self, json):
-        pass
+        return ""
+    def checkStatus(self, response):
+        return False

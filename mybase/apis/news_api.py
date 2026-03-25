@@ -14,3 +14,8 @@ class NewsApi(ApiInterface):
         params = json
         params["apiKey"] = self.apiKey
         return URLSearchParams.setSearchParams(NewsApi.API_URL, params)
+    
+    def checkStatus(self, response):
+        if response.json()["status"] == "error":
+            return False
+        return True
