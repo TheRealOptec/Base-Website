@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+*.pyc
+
+# uv
+*.toml
+uv.lock
+.python-version
+
+# API Keys
+*.env
