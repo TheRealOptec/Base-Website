@@ -262,7 +262,7 @@
 
             try {
                 if (source.startsWith("<simples")) {
-                    previewOutput.appendChild(SimplesCompiler.compile(source));
+                    SimplesCompiler.compile(source).then(frag => previewOutput.appendChild(frag));
                 } else {
                     renderPlainText(source, previewOutput);
                 }

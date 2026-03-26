@@ -41,10 +41,9 @@ export class NewsNode extends CompNodeParent {
         for (let child of node.childNodes) {
             this.compileNewsNode(fragHead, child, apiParams);
         }
-        ApiHandler.makeReq(json => {
-            console.log(json);
-            NewsNode.addRequestResults(fragHead, apiParams["options"], json);
-        }, apiParams["req"]);
+        SimplesCompiler.addPromise(ApiHandler.makeReq(apiParams["req"])
+            .then(response => response.json())
+            .then(json => NewsNode.addRequestResults(fragHead, apiParams["options"], json)));
     }
 }
 NewsNode.instance = null;

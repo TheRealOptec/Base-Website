@@ -19,4 +19,17 @@ To handle api related tasks, we use the **\<embed\>** tag. The **\<embed\>** wil
 ### News
 Major news headlines and articles can be embedded with the use of the **\<news\>** embed tag. The arguments for an API call are contained within the internal tags (these are specific to specific APIs).
 
-#### News Options
+#### q
+The **\<q\>** option specifies the search query for news articles.
+
+#### from
+The **\<from\>** option specifies the date after which news article should be taken from. This api is free and so this date is limited to about half a month ago - this may cause issues with posts but it's not important. Dates should be in yyyy-mm-dd format. 
+
+#### language
+The **\<language\>** option specifies the language the article should be in - this will likely be set to **en** for English.
+
+#### sortBy
+The **\<sortBy\>** option specifies how to the articles should be sorted - I'll list the available options for this later. 
+
+#### top
+The **\<top\>** option specifies how many articles should be displayed - by default this will be set to display every single article. 

@@ -1,12 +1,29 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { ConsoleErrorChannel } from './error_handling/ConsoleErrorChannel.js';
 import { SimplesParser } from './SimplesParser.js';
 export class SimplesCompiler {
     static addCompilerNode(name, compNode) {
         this.compilerNodes[name] = compNode;
     }
+    static addPromise(promise) {
+        this.promises.push(promise);
+    }
     static compile(content) {
-        const frag = SimplesCompiler.interpretXML(document.createDocumentFragment(), SimplesParser.parse(content));
-        return frag;
+        return __awaiter(this, void 0, void 0, function* () {
+            // Reset promises
+            this.promises = [];
+            const frag = SimplesCompiler.interpretXML(document.createDocumentFragment(), SimplesParser.parse(content));
+            yield Promise.all(this.promises);
+            return frag;
+        });
     }
     static interpretXML(frag, xml) {
         return SimplesCompiler.interpretNodeList(frag, xml.documentElement.childNodes);
@@ -46,4 +63,6 @@ export class SimplesCompiler {
 SimplesCompiler.compilerNodes = {};
 // The standard error handler for the simples complier
 SimplesCompiler.stdErr = new ConsoleErrorChannel();
+// The number of unresolved promises created in execution
+SimplesCompiler.promises = [];
 //# sourceMappingURL=SimplesCompiler.js.map

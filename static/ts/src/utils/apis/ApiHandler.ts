@@ -14,9 +14,7 @@ export class ApiHandler {
         return `${this.API_ADDR}?${this.getParamsToUrlOptions(params)}`;
     }
 
-    public static makeReq(apiFn: ((value: any) => any), params: Record<string, any> = {}) {
-        fetch(this.createGetUrl(params))
-        .then(response => response.json())
-        .then(apiFn);
+    public static async makeReq(params: Record<string, any> = {}): Promise<any> {
+        return fetch(this.createGetUrl(params))
     }
 }
