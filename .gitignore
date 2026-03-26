@@ -34,3 +34,6 @@ uv.lock
 # API Keys (ensure that api keys are always stored inside .env files, any other environment information may
 # be placed in .env files too)
 *.env
+
+# Probably should not commit the db
+db.sqlite3
