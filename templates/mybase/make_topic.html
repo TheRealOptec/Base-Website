@@ -2,7 +2,6 @@
 {% url 'mybase:home' as home_url %}
 {% url 'user_login' as login_url %}
 {% url 'sign_up' as sign_up_url %}
-{% url 'mybase:posting_guide' as posting_guide_url %}
 
 {% block title %}Make Topic{% endblock %}
 
@@ -28,18 +27,12 @@
                 <p class="text-muted small mb-3">
                     We also added a quick guide explaining how posts should be written and previewed.
                 </p>
-                {% if posting_guide_url %}
-                    <a
-                        href="{{ posting_guide_url }}"
-                        class="btn btn-outline-primary btn-sm w-100"
-                    >
-                        Read Posting Guide
-                    </a>
-                {% else %}
-                    <span class="btn btn-outline-primary btn-sm w-100 disabled" aria-disabled="true" tabindex="-1">
-                        Read Posting Guide
-                    </span>
-                {% endif %}
+                <a
+                    href="{% url 'mybase:posting_guide' %}"
+                    class="btn btn-outline-primary btn-sm w-100"
+                >
+                    Read Posting Guide
+                </a>
             </div>
         </div>
     </div>

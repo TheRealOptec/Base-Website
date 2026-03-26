@@ -3,7 +3,6 @@
 {% url 'mybase:home' as home_url %}
 {% url 'user_login' as login_url %}
 {% url 'sign_up' as sign_up_url %}
-{% url 'mybase:posting_guide' as posting_guide_url %}
 
 {% block title %}
     {% if topic %}Make Post - {{ topic.name }}{% else %}Make Post{% endif %}
@@ -57,18 +56,12 @@
                     <li>Add an image only if it supports your post.</li>
                     <li>Avoid duplicate posts.</li>
                 </ul>
-                {% if posting_guide_url %}
-                    <a
-                        href="{{ posting_guide_url }}"
-                        class="btn btn-outline-primary btn-sm w-100"
-                    >
-                        Read full posting guide
-                    </a>
-                {% else %}
-                    <span class="btn btn-outline-primary btn-sm w-100 disabled" aria-disabled="true" tabindex="-1">
-                        Read full posting guide
-                    </span>
-                {% endif %}
+                <a
+                    href="{% url 'mybase:posting_guide' %}"
+                    class="btn btn-outline-primary btn-sm w-100"
+                >
+                    Read full posting guide
+                </a>
             </div>
         </div>
     </div>
