@@ -26,11 +26,11 @@
                     {% endif %}
 
                     <div class="d-flex flex-wrap gap-2">
-                        {% if topic.total_likes %}
-                            <span class="badge bg-primary">{{ topic.total_likes }} likes</span>
+                        {% if topic.likes %}
+                            <span class="badge bg-primary">{{ topic.likes }} likes</span>
                         {% endif %}
-                        {% if topic.total_views %}
-                            <span class="badge bg-dark">{{ topic.total_views }} views</span>
+                        {% if topic.views %}
+                            <span class="badge bg-dark">{{ topic.views }} views</span>
                         {% endif %}
                     </div>
                 {% else %}
@@ -242,7 +242,7 @@
                                             </span>
 
                                             <span class="badge bg-primary">
-                                                Likes: {{ post.likes|default:post.total_likes|default:0 }}
+                                                Likes: {{ post.likes|default:post.likes|default:0 }}
                                             </span>
                                         </div>
 

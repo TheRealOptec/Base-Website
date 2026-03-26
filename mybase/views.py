@@ -109,8 +109,10 @@ def view_topic(request, topic_slug):
         topic = Topic.objects.get(slug=topic_slug)
     except:
         topic = None
+    posts = Page.objects.filter(topic=topic).values()
     return render(request, 'mybase/topic.html', context={
-        "topic": topic
+        "topic": topic,
+        "posts": posts
     })
 
 @login_required
