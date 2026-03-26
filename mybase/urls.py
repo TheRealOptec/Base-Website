@@ -7,4 +7,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('search/', views.search, name='search'),
     path('apis/', views.api_handler, name='api_handler'),
+    path('topic/<slug:topic_slug>/post/<slug:post_name_slug>', views.view_post, name='view_post'),
+    path('topic/<slug:topic_slug>/make-post/', views.make_post, name='make_post'),
 ]

@@ -19,6 +19,10 @@ export class EmbedNode extends CompNodeParent {
         embedNode.compile(fragHead, node, {});
     }
     compile(fragHead, node, params) {
+        console.log(fragHead);
+        const elem = document.createElement("p");
+        elem.innerHTML = "HHHHH";
+        fragHead.appendChild(elem);
         for (let child of node.childNodes) {
             this.compileEmbedNode(fragHead, child);
         }

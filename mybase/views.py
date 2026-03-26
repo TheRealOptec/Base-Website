@@ -87,5 +87,13 @@ def view_profile(request, username_slug):
     # TODO - db query here
     return render(request, 'mybase/profile.html', context={})
 
+def view_post(request, topic_slug, post_name_slug):
+    # TODO - db query here
+    return render(request, 'mybase/post_detail.html', context={})
+
+def make_post(request, topic_slug):
+    # TODO - db query here
+    return render(request, 'mybase/make_post.html', context={})
+
 def api_handler(request):
     return ApiHandler.handleReq(request)

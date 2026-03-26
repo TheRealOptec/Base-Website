@@ -30,7 +30,6 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
     private static addRequestResults(fragHead: Node, options: Record<string, string>|undefined, json: any): void {
         const articlesArr = json["articles"];
         if(options === undefined) return;
-        
         const articlesCount = (options["top"] === undefined) ? articlesArr.length : options["top"];
 
         for(let i = 0; i < Math.min(articlesCount, articlesArr.length); i++) {
