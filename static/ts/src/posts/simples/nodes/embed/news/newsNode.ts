@@ -30,7 +30,6 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
     private static addRequestResults(fragHead: Node, options: Record<string, string>|undefined, json: any): void {
         const articlesArr = json["articles"];
         if(options === undefined) return;
-        
         const articlesCount = (options["top"] === undefined) ? articlesArr.length : options["top"];
 
         for(let i = 0; i < Math.min(articlesCount, articlesArr.length); i++) {
@@ -50,9 +49,11 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
         for(let child of node.childNodes) {
             this.compileNewsNode(fragHead, child, apiParams);
         }
-        ApiHandler.makeReq(json => {
-            console.log(json);
-            NewsNode.addRequestResults(fragHead, apiParams["options"], json);
-        }, apiParams["req"]);
+        
+        SimplesCompiler.addPromise(
+            ApiHandler.makeReq(apiParams["req"])
+            .then(response => response.json())
+            .then(json => NewsNode.addRequestResults(fragHead, apiParams["options"], json))
+        );
     }
 }

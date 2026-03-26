@@ -1,7 +1,7 @@
 import { SimplesCompiler } from './posts/simples/SimplesCompiler.js';
 import {} from './posts/simples/NodeInit.js'; // Initialise compiler nodes
 import { ApiHandler } from './utils/apis/ApiHandler.js';
-const frag = SimplesCompiler.compile(`
+SimplesCompiler.compile(`
 <simples>
     <h>My First Post!</h>
     <p>
@@ -17,6 +17,7 @@ const frag = SimplesCompiler.compile(`
         </embed>
     </p>
 </simples>
-`);
-document.body.appendChild(frag);
+`).then(frag => {
+    document.body.appendChild(frag);
+});
 //# sourceMappingURL=testing_main.js.map
