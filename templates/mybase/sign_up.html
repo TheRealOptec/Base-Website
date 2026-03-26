@@ -26,7 +26,7 @@
                         <a href="{{ edit_profile_url|default:'/edit-profile/' }}" class="btn btn-outline-secondary">Edit Profile</a>
                     </div>
                 {% else %}
-                    <form method="post" action="/mybase/sign_up/">
+                    <form method="post">
                         {% csrf_token %}
 
                         {% if user_form %}
@@ -92,14 +92,14 @@
                                 <input
                                     type="password"
                                     id="signUpPassword1"
-                                    name="password"
+                                    name="password1"
                                     class="form-control"
                                     placeholder="Create a password"
                                     required
                                 >
                             </div>
 
-                            <!--<div class="mb-4">
+                            <div class="mb-4">
                                 <label for="signUpPassword2" class="form-label">Confirm Password</label>
                                 <input
                                     type="password"
@@ -109,7 +109,7 @@
                                     placeholder="Repeat your password"
                                     required
                                 >
-                            </div>-->
+                            </div>
                         {% endif %}
 
                         <div class="d-grid mb-3">

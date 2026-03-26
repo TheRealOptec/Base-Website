@@ -6,7 +6,7 @@ from mybase.forms import UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 
-from mybase.models import Topic,Page
+from mybase.models import Topic,Page,User,UserProfile
 
 from .apis.api_handler import ApiHandler
 
@@ -53,6 +53,30 @@ def sign_up(request):
         "user_form": user_form,
         "profile_form": profile_form
     })
+
+def sign_up_v2(request):
+    if request.method == "POST":
+        username = request.POST.get("username", None)
+        email = request.POST.get("email", None)
+        password1 = request.POST.get("password1", None)
+        password2 = request.POST.get("password2", None)
+        # Check data validity
+        if (password1 is None or password2 is None or email is None or username is None):
+            print("A field is invalid on sign_up_v2")
+            return render(request, "mybase/sign_up.html", context={})
+        # Check if the password has been confirmed properly
+        if (password1 != password2):
+            # TODO - try and do this dynamically if possible, I believe we could use Ajax for this
+            return HttpResponse("Did not confirm password")
+        # Sign in and render new home page
+        user = User(username=username, email=email, password=password1)
+        user.save()
+        userProfile = UserProfile(user=user)
+        userProfile.save()
+        login(request, user)
+        return redirect(reverse("mybase:home"))
+        
+    return render(request, "mybase/sign_up.html", context={})
 
 def user_login(request):
     invalid_details = False
