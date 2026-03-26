@@ -109,8 +109,10 @@ def view_topic(request, topic_slug):
         topic = Topic.objects.get(slug=topic_slug)
     except:
         topic = None
+    posts = Page.objects.filter(topic=topic).values()
     return render(request, 'mybase/topic.html', context={
-        "topic": topic
+        "topic": topic,
+        "posts": posts
     })
 
 @login_required
@@ -138,7 +140,8 @@ def make_post(request, topic_slug):
             return redirect(reverse('mybase:home'))
         post = Page(
             topic=topic,
-            title=request.POST.get('title', None)
+            title=request.POST.get('title', None),
+            body=request.POST.get('body', "")
         )
         post.save()
         return render(request, 'mybase/make_post.html', context={
