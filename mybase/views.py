@@ -93,6 +93,15 @@ def view_post(request, topic_slug, post_name_slug):
     # TODO - db query here
     return render(request, 'mybase/post_detail.html', context={})
 
+def view_topic(request, topic_slug):
+    try:
+        topic = Topic.objects.get(slug=topic_slug)
+    except:
+        topic = None
+    return render(request, 'mybase/topic.html', context={
+        "topic": topic
+    })
+
 @login_required
 def make_topic(request):
     # Adapted code from: https://www.w3schools.com/django/django_insert_data.php
