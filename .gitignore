@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+*.pyc
+*.cpython-311
+*.cpython-311.pyc
+
+# uv
+*.toml
+uv.lock
+.python-version
+
+# API Keys (ensure that api keys are always stored inside .env files, any other environment information may
+# be placed in .env files too)
+*.env
+
+# Probably should not commit the db
+db.sqlite3

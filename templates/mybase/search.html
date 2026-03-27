@@ -1,8 +1,14 @@
 {% extends 'mybase/base.html' %}
+{% url 'mybase:home' as home_url %}
+{% url 'user_login' as login_url %}
+{% url 'sign_up' as sign_up_url %}
+{% url 'edit_user_profile' as edit_profile_url %}
 
 {% block title %}Search{% endblock %}
 
 {% block content %}
+{% firstof request.GET.search_in request.GET.searchIn 'all' as selected_search_in %}
+{% firstof request.GET.sort_by request.GET.sortBy 'relevance' as selected_sort_by %}
 <div class="row g-4">
 
     <!-- Sidebar -->
@@ -22,6 +28,34 @@
                     <p class="text-muted small mb-3">No search query entered.</p>
                 {% endif %}
 
+                <div class="mb-3">
+                    <p class="mb-2"><strong>Filters:</strong></p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark border">
+                            Search in:
+                            {% if selected_search_in == 'topics' %}
+                                Topics
+                            {% elif selected_search_in == 'posts' %}
+                                Posts
+                            {% else %}
+                                All
+                            {% endif %}
+                        </span>
+                        <span class="badge bg-light text-dark border">
+                            Sort by:
+                            {% if selected_sort_by == 'newest' %}
+                                Newest
+                            {% elif selected_sort_by == 'most_viewed' %}
+                                Most Viewed
+                            {% elif selected_sort_by == 'most_liked' %}
+                                Most Liked
+                            {% else %}
+                                Relevance
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between mb-2">
                     <span>Topics</span>
                     <span class="badge bg-primary">{{ topic_results|length|default:0 }}</span>
@@ -39,12 +73,12 @@
             <div class="card-body">
                 <h2 class="h6 mb-3">Quick Links</h2>
                 <div class="d-grid gap-2">
-                    <a href="/home/" class="btn btn-outline-primary btn-sm">Home</a>
+                    <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-outline-primary btn-sm">Home</a>
                     {% if user.is_authenticated %}
-                        <a href="/edit-profile/" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
+                        <a href="{{ edit_profile_url|default:'/edit-profile/' }}" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
                     {% else %}
-                        <a href="/login/" class="btn btn-outline-primary btn-sm">Log In</a>
-                        <a href="/sign-up/" class="btn btn-success btn-sm">Sign Up</a>
+                        <a href="{{ login_url|default:'/login/' }}" class="btn btn-outline-primary btn-sm">Log In</a>
+                        <a href="{{ sign_up_url|default:'/sign-up/' }}" class="btn btn-success btn-sm">Sign Up</a>
                     {% endif %}
                 </div>
             </div>
@@ -69,105 +103,123 @@
                         Use the search bar above to search for topics or posts.
                     </p>
                 {% endif %}
+
+                {% if selected_search_in or selected_sort_by %}
+                    <p class="text-muted small mt-2 mb-0">
+                        The search request now includes the selected filter values from the top search bar.
+                    </p>
+                {% endif %}
             </div>
         </div>
 
         <!-- Topic results -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="h5 mb-0">Matching Topics</h2>
-                    <span class="text-muted small">{{ topic_results|length|default:0 }} result{{ topic_results|length|pluralize }}</span>
-                </div>
-
-                {% if topic_results %}
-                    <div class="d-flex flex-column gap-3">
-                        {% for topic in topic_results %}
-                            <div class="border rounded p-3">
-                                <h3 class="h6 mb-1">
-                                    <a href="/topic/{{ topic.slug }}/" class="text-decoration-none">
-                                        {{ topic.name }}
-                                    </a>
-                                </h3>
-
-                                {% if topic.description %}
-                                    <p class="text-muted mb-2">{{ topic.description|truncatewords:20 }}</p>
-                                {% else %}
-                                    <p class="text-muted mb-2">No description available.</p>
-                                {% endif %}
-
-                                <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge bg-primary">Likes: {{ topic.total_likes|default:0 }}</span>
-                                    <span class="badge bg-dark">Views: {{ topic.total_views|default:0 }}</span>
-                                    <span class="badge bg-secondary">Comments: {{ topic.comment_count|default:0 }}</span>
-                                </div>
-                            </div>
-                        {% endfor %}
+        {% if selected_search_in != 'posts' %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0">Matching Topics</h2>
+                        <span class="text-muted small">{{ topic_results|length|default:0 }} result{{ topic_results|length|pluralize }}</span>
                     </div>
-                {% else %}
-                    <p class="text-muted mb-0">No matching topics found.</p>
-                {% endif %}
+
+                    {% if topic_results %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for topic in topic_results %}
+                                {% url 'mybase:view_topic' topic.slug as topic_detail_url %}
+                                <div class="border rounded p-3">
+                                    <h3 class="h6 mb-1">
+                                        <a
+                                            href="{% if topic_detail_url %}{{ topic_detail_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
+                                            class="text-decoration-none"
+                                        >
+                                            {{ topic.name }}
+                                        </a>
+                                    </h3>
+
+                                    {% if topic.description %}
+                                        <p class="text-muted mb-2">{{ topic.description|truncatewords:20 }}</p>
+                                    {% else %}
+                                        <p class="text-muted mb-2">No description available.</p>
+                                    {% endif %}
+
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="badge bg-primary">Likes: {{ topic.total_likes|default:0 }}</span>
+                                        <span class="badge bg-dark">Views: {{ topic.total_views|default:0 }}</span>
+                                        <span class="badge bg-secondary">Comments: {{ topic.comment_count|default:0 }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No matching topics found.</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         <!-- Post results -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="h5 mb-0">Matching Posts</h2>
-                    <span class="text-muted small">{{ post_results|length|default:0 }} result{{ post_results|length|pluralize }}</span>
-                </div>
+        {% if selected_search_in != 'topics' %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0">Matching Posts</h2>
+                        <span class="text-muted small">{{ post_results|length|default:0 }} result{{ post_results|length|pluralize }}</span>
+                    </div>
 
-                {% if post_results %}
-                    <div class="d-flex flex-column gap-3">
-                        {% for post in post_results %}
-                            <div class="border rounded p-3">
-                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-2 mb-2">
-                                    <div>
-                                        <h3 class="h6 mb-1">
-                                            <a href="/post/{{ post.slug }}/" class="text-decoration-none">
-                                                {{ post.title }}
-                                            </a>
-                                        </h3>
+                    {% if post_results %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for post in post_results %}
+                                {% url 'mybase:view_post' post.topic.slug post.slug as post_detail_url %}
+                                <div class="border rounded p-3">
+                                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-2 mb-2">
+                                        <div>
+                                            <h3 class="h6 mb-1">
+                                                <a
+                                                    href="{% if post_detail_url %}{{ post_detail_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}{% endif %}"
+                                                    class="text-decoration-none"
+                                                >
+                                                    {{ post.title }}
+                                                </a>
+                                            </h3>
 
-                                        <p class="text-muted small mb-0">
-                                            {% if post.author %}
-                                                by {{ post.author.username|default:post.author }}
-                                            {% else %}
-                                                by Unknown user
-                                            {% endif %}
-                                            {% if post.created_at %}
-                                                · {{ post.created_at }}
-                                            {% endif %}
-                                        </p>
+                                            <p class="text-muted small mb-0">
+                                                {% if post.author %}
+                                                    by {{ post.author.username|default:post.author }}
+                                                {% else %}
+                                                    by Unknown user
+                                                {% endif %}
+                                                {% if post.created_at %}
+                                                    · {{ post.created_at }}
+                                                {% endif %}
+                                            </p>
+                                        </div>
+
+                                        {% if post.topic %}
+                                            <span class="badge bg-light text-dark border">
+                                                {{ post.topic.name }}
+                                            </span>
+                                        {% endif %}
                                     </div>
 
-                                    {% if post.topic %}
-                                        <span class="badge bg-light text-dark border">
-                                            {{ post.topic.name }}
-                                        </span>
+                                    {% if post.body %}
+                                        <p class="text-muted mb-3">{{ post.body|truncatewords:30 }}</p>
+                                    {% else %}
+                                        <p class="text-muted mb-3">No preview available.</p>
                                     {% endif %}
-                                </div>
 
-                                {% if post.body %}
-                                    <p class="text-muted mb-3">{{ post.body|truncatewords:30 }}</p>
-                                {% else %}
-                                    <p class="text-muted mb-3">No preview available.</p>
-                                {% endif %}
-
-                                <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge bg-primary">Likes: {{ post.likes|default:0 }}</span>
-                                    <span class="badge bg-secondary">Comments: {{ post.comment_count|default:0 }}</span>
-                                    <span class="badge bg-dark">Views: {{ post.views|default:0 }}</span>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="badge bg-primary">Likes: {{ post.likes|default:0 }}</span>
+                                        <span class="badge bg-secondary">Comments: {{ post.comment_count|default:0 }}</span>
+                                        <span class="badge bg-dark">Views: {{ post.views|default:0 }}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-muted mb-0">No matching posts found.</p>
-                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No matching posts found.</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
 
     </div>
 </div>

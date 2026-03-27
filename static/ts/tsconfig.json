@@ -9,9 +9,8 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
+    "module": "es6", // Used to be "nodenext"
+    "target": "es2015", // Used to be "esnext"
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -37,7 +36,7 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": true, // Changing this from true to false fixed my imports and I'm not sure why
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",

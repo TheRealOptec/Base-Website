@@ -1,0 +1,23 @@
+import type { ISimplesNode } from "../ISimplesNode.js";
+import { SimplesCompiler } from "../SimplesCompiler.js";
+
+export class PNode implements ISimplesNode {
+
+    private static instance: PNode|null = null;
+
+    private constructor() {
+        SimplesCompiler.addCompilerNode("p", this);
+    }
+
+    public static getInstance(): ISimplesNode|null {
+        if(PNode.instance === null) this.instance = new PNode();
+        return PNode.instance;
+    }
+
+    public compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void {
+        const pElem = document.createElement("p");
+        SimplesCompiler.compileNodeChildren(pElem, node);
+        fragHead.appendChild(pElem);
+        return undefined;
+    }
+}

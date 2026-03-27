@@ -1,0 +1,1 @@
+{"version":3,"file":"CompNodeParent.d.ts","sourceRoot":"","sources":["../../../ts/src/posts/simples/CompNodeParent.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAC;AAEtD,qBAAa,cAAc;IACvB,SAAS,CAAC,MAAM,CAAC,SAAS,EAAE,MAAM,CAAC,MAAM,EAAC,YAAY,CAAC,CAAM;WAE/C,eAAe,CAAC,IAAI,EAAE,MAAM,EAAE,IAAI,EAAE,YAAY,GAAG,IAAI;CAGxE"}

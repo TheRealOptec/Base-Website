@@ -1,0 +1,1 @@
+{"version":3,"file":"SimplesParser.d.ts","sourceRoot":"","sources":["../../../ts/src/posts/simples/SimplesParser.ts"],"names":[],"mappings":"AACA,qBAAa,aAAa;IAEtB,OAAO,CAAC,MAAM,CAAC,SAAS,CAAkB;IAE1C,OAAO,CAAC,MAAM,CAAC,cAAc;IAS7B,OAAO,CAAC,MAAM,CAAC,gBAAgB;IAI/B,OAAO,CAAC,MAAM,CAAC,YAAY;IAO3B,OAAO,CAAC,MAAM,CAAC,SAAS;WASV,KAAK,CAAC,OAAO,EAAE,MAAM,GAAG,QAAQ;CAMjD"}
