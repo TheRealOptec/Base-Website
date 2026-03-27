@@ -6,7 +6,7 @@ from mybase.forms import UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 
-from mybase.models import Topic,Page,User,UserProfile #,Comment
+from mybase.models import Topic,Page,User,UserProfile,Comment
 
 from .apis.api_handler import ApiHandler
 from .searching.searching_handler import SearchingHandler
@@ -137,13 +137,13 @@ def view_post(request, topic_slug, post_name_slug):
     except:
         # TODO - remove this
         return HttpResponse("No such post exists")
-    #try:
-    #    comments = Comment.objects.filter(post=post).values()
-    #except:
-    #    comments = None
+    try:
+        comments = Comment.objects.filter(post=post).values()
+    except:
+        comments = None
     return render(request, 'mybase/post_detail.html', context={
         "post": post,
-        "comments": None
+        "comments": comments
     })
 
 def view_topic(request, topic_slug):
