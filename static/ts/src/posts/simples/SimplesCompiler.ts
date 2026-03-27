@@ -9,16 +9,26 @@ export class SimplesCompiler {
     // The standard error handler for the simples complier
     private static stdErr: ISimplesErrorChannel = new ConsoleErrorChannel();
 
+    // The number of unresolved promises created in execution
+    private static promises: Promise<any>[] = [];
+
     public static addCompilerNode(name: string, compNode: ISimplesNode): void {
         this.compilerNodes[name] = compNode;
     }
 
-    public static compile(content: string): DocumentFragment {
-        
-        const frag: DocumentFragment = SimplesCompiler.interpretXML(
+    public static addPromise(promise: Promise<any>): void {
+        this.promises.push(promise);
+    }
+
+    public static async compile(content: string): Promise<DocumentFragment> {
+        // Reset promises
+        this.promises = [];
+
+        const frag = SimplesCompiler.interpretXML(
             document.createDocumentFragment(),
             SimplesParser.parse(content)
         );
+        await Promise.all(this.promises);
         return frag;
     }
     private static interpretXML(frag: DocumentFragment, xml: Document): DocumentFragment {
@@ -42,7 +52,7 @@ export class SimplesCompiler {
                 this.stdErr.reportError(`${child.nodeName} is not a defined Simples element`);
                 return;
             }
-            compNode.compile(fragHead, child);
+            compNode.compile(fragHead, child, {});
         }
     }
 
@@ -52,7 +62,11 @@ export class SimplesCompiler {
             this.stdErr.reportError(`${node.nodeName} is not a defined Simples element`);
             return frag;
         }
-        compNode.compile(frag, node);
+        compNode.compile(frag, node, {});
         return frag;
+    }
+
+    public static reportError(msg: string): void {
+        this.stdErr.reportError(msg);
     }
 }

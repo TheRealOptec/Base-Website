@@ -1,7 +1,8 @@
 {% extends 'mybase/base.html' %}
+{% load static %}
 {% url 'mybase:home' as home_url %}
-{% url 'mybase:login' as login_url %}
-{% url 'mybase:sign_up' as sign_up_url %}
+{% url 'user_login' as login_url %}
+{% url 'sign_up' as sign_up_url %}
 
 {% block title %}
     {% if topic %}Make Post - {{ topic.name }}{% else %}Make Post{% endif %}
@@ -28,14 +29,14 @@
                     {% endif %}
 
                     <div class="d-grid gap-2">
-                        {% url 'mybase:topic_detail' topic.slug as topic_detail_url %}
+                        {% url 'mybase:view_topic' topic.slug as topic_detail_url %}
                         <a
-                            href="{% if topic_detail_url %}{{ topic_detail_url }}{% else %}/topic/{{ topic.slug }}/{% endif %}"
+                            href="{% if topic_detail_url %}{{ topic_detail_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
                             class="btn btn-outline-secondary btn-sm"
                         >
                             Back to Topic
                         </a>
-                        <a href="{{ home_url|default:'/home/' }}" class="btn btn-outline-primary btn-sm">
+                        <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-outline-primary btn-sm">
                             Home
                         </a>
                     </div>
@@ -49,12 +50,18 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <h2 class="h6 mb-3">Posting Tips</h2>
-                <ul class="small text-muted mb-0 ps-3">
+                <ul class="small text-muted mb-3 ps-3">
                     <li>Use a clear and relevant title.</li>
                     <li>Keep your post respectful and on topic.</li>
                     <li>Add an image only if it supports your post.</li>
                     <li>Avoid duplicate posts.</li>
                 </ul>
+                <a
+                    href="{% url 'mybase:posting_guide' %}"
+                    class="btn btn-outline-primary btn-sm w-100"
+                >
+                    Read full posting guide
+                </a>
             </div>
         </div>
     </div>
@@ -77,7 +84,7 @@
                 </div>
 
                 {% if user.is_authenticated %}
-                    <form method="post" action="" enctype="multipart/form-data">
+                    <form method="post" enctype="multipart/form-data" data-simples-form>
                         {% csrf_token %}
 
                         {% if post_form %}
@@ -91,12 +98,33 @@
                                 {% endif %}
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label class="form-label" for="{{ post_form.body.id_for_label }}">Post Content</label>
-                                {{ post_form.body }}
-                                {% if post_form.body.errors %}
-                                    <div class="text-danger small mt-1">{{ post_form.body.errors }}</div>
-                                {% endif %}
+                                <p class="helptext mb-3">
+                                    Write the raw Simples/XML source here, then switch to preview mode to check the compiled output. Press Tab to insert indentation in the editor.
+                                </p>
+
+                                <div class="simples-mode-switch mb-3" data-simples-toggle>
+                                    <button type="button" class="btn btn-primary btn-sm" data-simples-mode="edit" aria-pressed="true">
+                                        Edit Raw Simples
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-simples-mode="preview" aria-pressed="false">
+                                        Preview Output
+                                    </button>
+                                </div>
+
+                                <div data-simples-editor-panel>
+                                    {{ post_form.body }}
+                                    {% if post_form.body.errors %}
+                                        <div class="text-danger small mt-1">{{ post_form.body.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="simples-preview-panel d-none mt-3" data-simples-preview-panel>
+                                    <div class="simples-preview-surface" data-simples-preview-output>
+                                        <p class="text-muted mb-0">Preview your compiled post here.</p>
+                                    </div>
+                                </div>
                             </div>
 
                             {% if post_form.image %}
@@ -118,19 +146,40 @@
                                     class="form-control"
                                     placeholder="Enter your post title"
                                     required
-                                >
+                                />
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="postBody" class="form-label">Post Content</label>
-                                <textarea
-                                    id="postBody"
-                                    name="body"
-                                    rows="8"
-                                    class="form-control"
-                                    placeholder="Write your post here..."
-                                    required
-                                ></textarea>
+                                <p class="helptext mb-3">
+                                    Write the raw Simples/XML source here, then switch to preview mode to check the compiled output. Press Tab to insert indentation in the editor.
+                                </p>
+
+                                <div class="simples-mode-switch mb-3" data-simples-toggle>
+                                    <button type="button" class="btn btn-primary btn-sm" data-simples-mode="edit" aria-pressed="true">
+                                        Edit Raw Simples
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-simples-mode="preview" aria-pressed="false">
+                                        Preview Output
+                                    </button>
+                                </div>
+
+                                <div data-simples-editor-panel>
+                                    <textarea
+                                        id="postBody"
+                                        name="body"
+                                        rows="8"
+                                        class="form-control"
+                                        placeholder="Write your post here..."
+                                        required
+                                    ></textarea>
+                                </div>
+
+                                <div class="simples-preview-panel d-none mt-3" data-simples-preview-panel>
+                                    <div class="simples-preview-surface" data-simples-preview-output>
+                                        <p class="text-muted mb-0">Preview your compiled post here.</p>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="mb-4">
@@ -151,15 +200,15 @@
                             </button>
 
                             {% if topic %}
-                                {% url 'mybase:topic_detail' topic.slug as cancel_topic_url %}
+                                {% url 'mybase:view_topic' topic.slug as cancel_topic_url %}
                                 <a
-                                    href="{% if cancel_topic_url %}{{ cancel_topic_url }}{% else %}/topic/{{ topic.slug }}/{% endif %}"
+                                    href="{% if cancel_topic_url %}{{ cancel_topic_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
                                     class="btn btn-outline-secondary"
                                 >
                                     Cancel
                                 </a>
                             {% else %}
-                                <a href="{{ home_url|default:'/home/' }}" class="btn btn-outline-secondary">
+                                <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-outline-secondary">
                                     Cancel
                                 </a>
                             {% endif %}
@@ -180,4 +229,94 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type="module">
+        import {} from "{% static 'js/posts/simples/NodeInit.js' %}";
+        import { SimplesCompiler } from "{% static 'js/posts/simples/SimplesCompiler.js' %}";
+
+        const postForm = document.querySelector("[data-simples-form]");
+        const bodyInput = postForm?.querySelector("textarea[name='body']");
+        const editorPanel = postForm?.querySelector("[data-simples-editor-panel]");
+        const previewPanel = postForm?.querySelector("[data-simples-preview-panel]");
+        const previewOutput = postForm?.querySelector("[data-simples-preview-output]");
+        const editButton = postForm?.querySelector("[data-simples-mode='edit']");
+        const previewButton = postForm?.querySelector("[data-simples-mode='preview']");
+
+        function renderPlainText(source, target) {
+            target.innerHTML = "";
+            const paragraph = document.createElement("p");
+            paragraph.className = "simples-plain-text mb-0";
+            paragraph.textContent = source;
+            target.appendChild(paragraph);
+        }
+
+        function insertTabIndentation(event) {
+            if (!bodyInput || event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const start = bodyInput.selectionStart ?? 0;
+            const end = bodyInput.selectionEnd ?? 0;
+            const value = bodyInput.value;
+            const indentation = "\t";
+
+            bodyInput.value = `${value.slice(0, start)}${indentation}${value.slice(end)}`;
+            bodyInput.selectionStart = bodyInput.selectionEnd = start + indentation.length;
+        }
+
+        function renderPreview() {
+            if (!bodyInput || !previewOutput) {
+                return;
+            }
+
+            const source = bodyInput.value.trim();
+            previewOutput.innerHTML = "";
+
+            if (!source) {
+                previewOutput.innerHTML = '<p class="text-muted mb-0">Nothing to preview yet.</p>';
+                return;
+            }
+
+            try {
+                if (source.startsWith("<simples")) {
+                    SimplesCompiler.compile(source).then(frag => previewOutput.appendChild(frag));
+                } else {
+                    renderPlainText(source, previewOutput);
+                }
+            } catch (error) {
+                renderPlainText(source, previewOutput);
+            }
+        }
+
+        function setMode(mode) {
+            if (!editorPanel || !previewPanel || !editButton || !previewButton) {
+                return;
+            }
+
+            const isPreview = mode === "preview";
+            editorPanel.classList.toggle("d-none", isPreview);
+            previewPanel.classList.toggle("d-none", !isPreview);
+
+            editButton.className = isPreview ? "btn btn-outline-secondary btn-sm" : "btn btn-primary btn-sm";
+            previewButton.className = isPreview ? "btn btn-primary btn-sm" : "btn btn-outline-secondary btn-sm";
+
+            editButton.setAttribute("aria-pressed", String(!isPreview));
+            previewButton.setAttribute("aria-pressed", String(isPreview));
+
+            if (isPreview) {
+                renderPreview();
+            }
+        }
+
+        if (postForm && bodyInput) {
+            bodyInput.addEventListener("keydown", insertTabIndentation);
+            editButton?.addEventListener("click", () => setMode("edit"));
+            previewButton?.addEventListener("click", () => setMode("preview"));
+        }
+    </script>
 {% endblock %}

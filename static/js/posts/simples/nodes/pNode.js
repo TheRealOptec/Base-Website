@@ -5,13 +5,14 @@ export class PNode {
     }
     static getInstance() {
         if (PNode.instance === null)
-            return new PNode();
+            this.instance = new PNode();
         return PNode.instance;
     }
-    compile(fragHead, node) {
+    compile(fragHead, node, params) {
         const pElem = document.createElement("p");
         SimplesCompiler.compileNodeChildren(pElem, node);
         fragHead.appendChild(pElem);
+        return undefined;
     }
 }
 PNode.instance = null;

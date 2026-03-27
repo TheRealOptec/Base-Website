@@ -1,7 +1,7 @@
 {% extends 'mybase/base.html' %}
 {% url 'mybase:home' as home_url %}
-{% url 'mybase:login' as login_url %}
-{% url 'mybase:edit_profile' as edit_profile_url %}
+{% url 'user_login' as login_url %}
+{% url 'edit_user_profile' as edit_profile_url %}
 
 {% block title %}Sign Up{% endblock %}
 
@@ -22,47 +22,46 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a href="{{ home_url|default:'/home/' }}" class="btn btn-primary">Go to Home</a>
+                        <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-primary">Go to Home</a>
                         <a href="{{ edit_profile_url|default:'/edit-profile/' }}" class="btn btn-outline-secondary">Edit Profile</a>
                     </div>
                 {% else %}
-                    <form method="post" action="">
+                    <form method="post">
                         {% csrf_token %}
 
-                        {% if form %}
-                            {{ form.non_field_errors }}
-
+                        {% if user_form %}
+                            {{ user_form.non_field_errors }}
                             <div class="mb-3">
-                                <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
-                                {{ form.username }}
-                                {% if form.username.errors %}
-                                    <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+                                <label class="form-label" for="{{ user_form.username.id_for_label }}">Username</label>
+                                {{ user_form.username }}
+                                {% if user_form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ user_form.username.errors }}</div>
                                 {% endif %}
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                                {{ user_form.email }}
+                                {% if user_form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ user_form.email.errors }}</div>
                                 {% endif %}
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label" for="{{ form.password1.id_for_label }}">Password</label>
-                                {{ form.password1 }}
-                                {% if form.password1.errors %}
-                                    <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+                                <label class="form-label" for="{{ user_form.password1.id_for_label }}">Password</label>
+                                {{ user_form.password }}
+                                {% if user_form.password.errors %}
+                                    <div class="text-danger small mt-1">{{ user_form.password.errors }}</div>
                                 {% endif %}
                             </div>
 
-                            <div class="mb-4">
-                                <label class="form-label" for="{{ form.password2.id_for_label }}">Confirm Password</label>
-                                {{ form.password2 }}
-                                {% if form.password2.errors %}
-                                    <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+                            <!--<div class="mb-4">
+                                <label class="form-label" for="{{ user_form.password2.id_for_label }}">Confirm Password</label>
+                                {{ user_form.password2 }}
+                                {% if user_form.password2.errors %}
+                                    <div class="text-danger small mt-1">{{ user_form.password2.errors }}</div>
                                 {% endif %}
-                            </div>
+                            </div>-->
                         {% else %}
                             <div class="mb-3">
                                 <label for="signUpUsername" class="form-label">Username</label>

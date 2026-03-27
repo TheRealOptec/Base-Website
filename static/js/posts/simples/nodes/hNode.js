@@ -5,10 +5,10 @@ export class HNode {
     }
     static getInstance() {
         if (HNode.instance === null)
-            return new HNode();
+            this.instance = new HNode();
         return HNode.instance;
     }
-    compile(fragHead, node) {
+    compile(fragHead, node, params) {
         const hElem = document.createElement("h1");
         SimplesCompiler.compileNodeChildren(hElem, node);
         fragHead.appendChild(hElem);

@@ -5,10 +5,10 @@ export class TextNode {
     }
     static getInstance() {
         if (TextNode.instance === null)
-            return new TextNode();
+            this.instance = new TextNode();
         return TextNode.instance;
     }
-    compile(fragHead, node) {
+    compile(fragHead, node, params) {
         if (fragHead.textContent == null)
             fragHead.textContent = node.textContent;
         else

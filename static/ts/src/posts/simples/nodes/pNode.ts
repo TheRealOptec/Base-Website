@@ -9,14 +9,15 @@ export class PNode implements ISimplesNode {
         SimplesCompiler.addCompilerNode("p", this);
     }
 
-    public static getInstance(): ISimplesNode {
-        if(PNode.instance === null) return new PNode();
+    public static getInstance(): ISimplesNode|null {
+        if(PNode.instance === null) this.instance = new PNode();
         return PNode.instance;
     }
 
-    public compile(fragHead: Node, node: Node): void {
+    public compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void {
         const pElem = document.createElement("p");
         SimplesCompiler.compileNodeChildren(pElem, node);
         fragHead.appendChild(pElem);
+        return undefined;
     }
 }

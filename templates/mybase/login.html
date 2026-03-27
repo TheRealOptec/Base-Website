@@ -1,7 +1,7 @@
 {% extends 'mybase/base.html' %}
 {% url 'mybase:home' as home_url %}
-{% url 'mybase:sign_up' as sign_up_url %}
-{% url 'mybase:edit_profile' as edit_profile_url %}
+{% url 'sign_up' as sign_up_url %}
+{% url 'edit_user_profile' as edit_profile_url %}
 
 {% block title %}Log In{% endblock %}
 
@@ -22,11 +22,11 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a href="{{ home_url|default:'/home/' }}" class="btn btn-primary">Go to Home</a>
+                        <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-primary">Go to Home</a>
                         <a href="{{ edit_profile_url|default:'/edit-profile/' }}" class="btn btn-outline-secondary">Edit Profile</a>
                     </div>
                 {% else %}
-                    <form method="post" action="">
+                    <form method="post" action="/login/">
                         {% csrf_token %}
 
                         {% if form %}
@@ -71,6 +71,18 @@
                                     required
                                 >
                             </div>
+                            <!-- TODO: change this design (I just put something random) -->
+                            {% if account_disabled %}
+                                <div class="text-danger small mt-1">
+                                    Your account has been disabled
+                                </div>
+                            {% else %}
+                                {% if invalid_details %}
+                                <div class="text-danger small mt-1">
+                                    Invalid login details
+                                </div>
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
 
                         <div class="d-grid mb-3">

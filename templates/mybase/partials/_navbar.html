@@ -1,16 +1,16 @@
 {% url 'mybase:home' as home_url %}
 {% url 'mybase:search' as search_url %}
-{% url 'mybase:login' as login_url %}
-{% url 'mybase:sign_up' as sign_up_url %}
-{% url 'mybase:edit_profile' as edit_profile_url %}
-{% url 'mybase:logout' as logout_url %}
+{% url 'user_login' as login_url %}
+{% url 'sign_up' as sign_up_url %}
+{% url 'edit_user_profile' as edit_profile_url %}
+{% url 'user_logout' as logout_url %}
 
 <header class="site-header border-bottom py-3">
     <div class="container">
         <div class="row align-items-center g-3">
 
             <div class="col-lg-4 col-md-5 text-center text-md-start">
-                <a href="{{ home_url|default:'/home/' }}" class="site-brand text-decoration-none">
+                <a href="{{ home_url|default:'/mybase/' }}" class="site-brand text-decoration-none">
                     <span class="site-brand-icon">
                         <i class="bi bi-moon-stars-fill"></i>
                     </span>
@@ -22,18 +22,61 @@
             </div>
 
             <div class="col-lg-4 col-md-7">
-                <form class="input-group site-search-form" action="{{ search_url|default:'/search/' }}" method="get">
-                    <button class="btn site-search-button" type="submit" aria-label="Search">
-                        <i class="bi bi-search"></i>
-                    </button>
-                    <input
-                        class="form-control site-search-input"
-                        type="search"
-                        name="q"
-                        placeholder="Search topics or posts..."
-                        value="{{ request.GET.q|default:'' }}"
-                        aria-label="Search topics or posts"
-                    >
+                <form class="site-search-tools" action="{{ search_url|default:'/mybase/search/' }}" method="get">
+                    <div class="input-group site-search-form">
+                        <button class="btn site-search-button" type="submit" aria-label="Search">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <input
+                            class="form-control site-search-input"
+                            type="search"
+                            name="q"
+                            placeholder="Search topics or posts..."
+                            value="{{ request.GET.q|default:'' }}"
+                            aria-label="Search topics or posts"
+                        >
+                    </div>
+
+                    <div class="dropdown">
+                        <button
+                            class="btn site-filter-button dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            data-bs-auto-close="outside"
+                            aria-expanded="false"
+                        >
+                            <i class="bi bi-sliders2"></i>
+                            <span class="site-filter-label">Filters</span>
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-end site-filter-menu p-3">
+                            <p class="site-filter-title mb-2">Search Filters</p>
+                            <p class="site-filter-copy mb-3">These will now be submitted with the main search as GET parameters.</p>
+
+                            <div class="site-filter-group mb-3">
+                                <label class="site-filter-group-label" for="siteSearchIn">Search In</label>
+                                <select class="form-select form-select-sm site-filter-select mt-2" id="siteSearchIn" name="search_in">
+                                    <option value="all" {% if request.GET.search_in == 'all' or not request.GET.search_in %}selected{% endif %}>All</option>
+                                    <option value="topics" {% if request.GET.search_in == 'topics' %}selected{% endif %}>Topics</option>
+                                    <option value="posts" {% if request.GET.search_in == 'posts' %}selected{% endif %}>Posts</option>
+                                </select>
+                            </div>
+
+                            <div class="site-filter-group mb-3">
+                                <label class="site-filter-group-label" for="siteSortBy">Sort By</label>
+                                <select class="form-select form-select-sm site-filter-select mt-2" id="siteSortBy" name="sort_by">
+                                    <option value="relevance" {% if request.GET.sort_by == 'relevance' or not request.GET.sort_by %}selected{% endif %}>Relevance</option>
+                                    <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Newest</option>
+                                    <option value="most_viewed" {% if request.GET.sort_by == 'most_viewed' %}selected{% endif %}>Most Viewed</option>
+                                    <option value="most_liked" {% if request.GET.sort_by == 'most_liked' %}selected{% endif %}>Most Liked</option>
+                                </select>
+                            </div>
+
+                            <div class="site-filter-footer">
+                                <span class="site-filter-copy mb-0 d-block">Filters update as you change them. Use the main search button to run the search.</span>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 

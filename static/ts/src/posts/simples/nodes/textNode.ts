@@ -9,12 +9,12 @@ export class TextNode implements ISimplesNode {
         SimplesCompiler.addCompilerNode("#text", this);
     }
 
-    public static getInstance(): ISimplesNode {
-        if(TextNode.instance === null) return new TextNode();
+    public static getInstance(): ISimplesNode|null {
+        if(TextNode.instance === null) this.instance = new TextNode();
         return TextNode.instance;
     }
 
-    public compile(fragHead: Node, node: Node): void {
+    public compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void {
         if(fragHead.textContent == null) fragHead.textContent = node.textContent;
         else fragHead.textContent += node.textContent;
     }
