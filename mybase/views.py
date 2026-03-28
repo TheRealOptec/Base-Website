@@ -152,6 +152,10 @@ def view_post(request, topic_slug, post_name_slug):
     # Increase view counts
     post.views += 1
     post.save()
+    # Add post history (if valid)
+    if request.user.is_authenticated:
+        post_history = PostHistory(user=request.user, post=post)
+        post_history.save()
     # If comment is being added then add comment
     if request.method == "POST":
         # Got help from: https://forum.djangoproject.com/t/how-to-get-current-user/10234/5

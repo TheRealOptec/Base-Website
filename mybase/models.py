@@ -62,7 +62,7 @@ class PostHistory(models.Model):
         super(PostHistory, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user} History: {self.topic} - accessed on {self.access_time}"
+        return f"{self.user} History: {self.post} - accessed on {self.access_time}"
 
 
 class TopicHistory(models.Model):
