@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
-from mybase.forms import UserForm, UserProfileForm
+from mybase.forms import PostForm, UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 
@@ -12,6 +12,29 @@ from .apis.api_handler import ApiHandler
 from .searching.searching_handler import SearchingHandler
 from .searching.search_in_options import SearchIn
 from .searching.sort_by_options import SortBy
+
+
+def _get_topic(topic_slug):
+    try:
+        return Topic.objects.get(slug=topic_slug)
+    except Topic.DoesNotExist:
+        return None
+
+
+def _get_post(topic, post_slug):
+    try:
+        return Page.objects.get(topic=topic, slug=post_slug)
+    except Page.DoesNotExist:
+        return None
+
+
+def _render_post_form(request, topic, post_form, post=None):
+    return render(request, 'mybase/make_post.html', context={
+        "topic": topic,
+        "post": post,
+        "post_form": post_form,
+        "is_editing": post is not None,
+    })
 
 def redirect_home(request):
     return redirect(reverse("mybase:home"))
@@ -237,29 +260,59 @@ def make_topic(request):
 
 @login_required
 def make_post(request, topic_slug):
+    topic = _get_topic(topic_slug)
+    if topic is None:
+        return redirect(reverse('mybase:home'))
+
     if request.method == "POST":
-        try:
-            topic = Topic.objects.get(slug=topic_slug)
-        except:
-            # TODO - remove this
-            return redirect(reverse('mybase:home'))
-        post = Page(
-            topic=topic,
-            title=request.POST.get('title', None),
-            body=request.POST.get('body', "")
-        )
-        post.author = request.user
-        post.save()
-        return render(request, 'mybase/make_post.html', context={
-            "topic": topic
+        post_form = PostForm(request.POST)
+        if post_form.is_valid():
+            if Page.objects.filter(topic=topic).exists():
+                post_form.add_error(None, "This topic already has a post and cannot accept another one right now.")
+            elif Page.objects.filter(author=request.user).exists():
+                post_form.add_error(None, "Your account already has a post and cannot create another one right now.")
+            else:
+                post = Page(
+                    topic=topic,
+                    author=request.user,
+                    title=post_form.cleaned_data['title'],
+                    body=post_form.cleaned_data['body'],
+                )
+                post.save()
+                return redirect(reverse('mybase:view_post', args=[topic.slug, post.slug]))
+    else:
+        post_form = PostForm()
+
+    return _render_post_form(request, topic, post_form)
+
+
+@login_required
+def edit_post(request, topic_slug, post_name_slug):
+    topic = _get_topic(topic_slug)
+    if topic is None:
+        return HttpResponse("No such topic exist", status=404)
+
+    post = _get_post(topic, post_name_slug)
+    if post is None:
+        return HttpResponse("No such post exists", status=404)
+
+    if post.author != request.user:
+        return HttpResponse("You do not have permission to edit this post.", status=403)
+
+    if request.method == "POST":
+        post_form = PostForm(request.POST)
+        if post_form.is_valid():
+            post.title = post_form.cleaned_data['title']
+            post.body = post_form.cleaned_data['body']
+            post.save()
+            return redirect(reverse('mybase:view_post', args=[topic.slug, post.slug]))
+    else:
+        post_form = PostForm(initial={
+            "title": post.title,
+            "body": post.body,
         })
-    try:
-        topic = Topic.objects.get(slug=topic_slug)
-    except:
-        topic = None
-    return render(request, 'mybase/make_post.html', context={
-        "topic": topic
-    })
+
+    return _render_post_form(request, topic, post_form, post=post)
 
 def api_handler(request):
     return ApiHandler.handleReq(request)

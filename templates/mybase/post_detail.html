@@ -78,6 +78,15 @@
                     {% endif %}
 
                     {% if user.is_authenticated and post and post.topic %}
+                        {% if user == post.author %}
+                            {% url 'mybase:edit_post' post.topic.slug post.slug as sidebar_edit_post_url %}
+                            <a
+                                href="{% if sidebar_edit_post_url %}{{ sidebar_edit_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/edit/{% endif %}"
+                                class="btn btn-outline-primary btn-sm"
+                            >
+                                Edit Post
+                            </a>
+                        {% endif %}
                         {% url 'mybase:make_post' post.topic.slug as sidebar_make_post_url %}
                         <a
                             href="{% if sidebar_make_post_url %}{{ sidebar_make_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/make-post/{% endif %}"
@@ -149,6 +158,15 @@
                             <span class="badge bg-dark">
                                 Views: {{ post.views|default:0 }}
                             </span>
+                            {% if user == post.author %}
+                                {% url 'mybase:edit_post' post.topic.slug post.slug as edit_post_url %}
+                                <a
+                                    href="{% if edit_post_url %}{{ edit_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/edit/{% endif %}"
+                                    class="btn btn-outline-secondary btn-sm"
+                                >
+                                    Edit Post
+                                </a>
+                            {% endif %}
                             {% if user.is_authenticated %}
                                 {% url 'mybase:like_post' post.topic.slug post.slug as like_post_url %}
                                 <form
