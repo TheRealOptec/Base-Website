@@ -6,6 +6,8 @@ from mybase.forms import PostForm, UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 
+from django.template.defaultfilters import slugify
+
 from mybase.models import Topic,Page,User,UserProfile,Comment,PostLike,TopicHistory,PostHistory
 
 from .apis.api_handler import ApiHandler
@@ -161,7 +163,29 @@ def user_logout(request):
 
 @login_required
 def edit_user_profile(request):
-    return render(request, 'mybase/edit_profile.html', context={})
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        profile = None
+        print("Profile is None")
+    if request.method == "POST":
+        username = request.POST["username"]
+        bio = request.POST["bio"]
+        if request.user.is_authenticated:
+            if profile is not None:
+                # Change bio
+                profile.bio = bio
+                profile.save()
+                # Change username (if username not taken)
+                if not UserProfile.objects.filter(slug=slugify(username)).exists():
+                    request.user.username = username
+                    request.user.save()
+                else:
+                    # TODO - change this
+                    return HttpResponse("Username has been taken")
+    return render(request, 'mybase/edit_profile.html', context={
+        "profile": profile
+    })
 
 def view_profile(request, username_slug):
     try:
