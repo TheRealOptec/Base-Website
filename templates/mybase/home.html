@@ -97,7 +97,7 @@
                                 {% endif %}
 
                                 {% if post.body %}
-                                    <p class="mb-0 text-muted small">
+                                    <p class="mb-0 text-muted small simplesEditor simplesin-abc simplesout-abc">
                                         {{ post.body|truncatewords:20 }}
                                     </p>
                                 {% endif %}
@@ -192,4 +192,6 @@
 
     </div>
 </div>
+
+<script type="module" src="/static/js/posts/integration/StdSimplesIntegration.js"></script>
 {% endblock %}

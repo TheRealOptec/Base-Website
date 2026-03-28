@@ -27,6 +27,7 @@ export class NewsNode extends CompNodeParent {
         const articlesCount = (options["top"] === undefined) ? articlesArr.length : options["top"];
         const listHead = document.createElement("ol");
         for (let i = 0; i < Math.min(articlesCount, articlesArr.length); i++) {
+            console.log("BUG!");
             const article = articlesArr[i];
             const liElem = document.createElement("li");
             const aElem = document.createElement("a");
