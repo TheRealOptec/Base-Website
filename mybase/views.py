@@ -50,8 +50,8 @@ def home(request):
         recent_topics = []
         recent_posts = []
     # Get most viewed and most liked topics
-    most_viewed_topic = Topic.objects.order_by("-likes")[0]
-    most_liked_topic = Topic.objects.order_by("-views")[0]
+    most_viewed_topic = Topic.objects.order_by("-views")[0]
+    most_liked_topic = Topic.objects.order_by("-likes")[0]
     # Render home page
     context_dict = {
         "static_css_path": settings.STATIC_CSS_URL,
