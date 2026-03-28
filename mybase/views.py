@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
-from django.db.models import Count
 from mybase.forms import UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
@@ -205,17 +204,18 @@ def view_topic(request, topic_slug):
         # Add a view
         topic.views += 1
         topic.save()
-        # Get posts
-        posts = Page.objects.filter(topic=topic).values()
+        # Get posts as set
+        posts = list(Page.objects.filter(topic=topic).values())
 
         # Get likes
-        liked_post_ids = set()
+        post_likes = []
         if request.user.is_authenticated:
-            liked_post_ids = set(
-                PostLike.objects.filter(user=request.user, post__in=posts).values_list('post_id', flat=True)
-            )
-        for post in posts:
-            post.user_has_liked = post.id in liked_post_ids
+            post_likes = list(PostLike.objects.filter(user=request.user).values())
+        # Set whether or not the user has liked the post
+        for pl in post_likes:
+            # Probably won't work rn
+            if pl["post_id"] in posts:
+                pl["post"]["user_has_liked"] = True
         return render(request, 'mybase/topic.html', context={
             "topic": topic,
             "posts": posts
@@ -269,3 +269,31 @@ def api_handler(request):
 
 def posting_guide(request):
     return render(request, 'mybase/posting_guide.html', context={})
+
+def toggle_like_post(request, topic_slug, post_slug):
+    # Ensure that this is a POST request - otherwise let it return a 404 not found
+    if request.method == "POST":
+        # Ensure user is authenticated
+        if request.user.is_authenticated:
+            # Attempt to get the the topic and post
+            try:
+                topic = Topic.objects.get(slug=topic_slug)
+            except:
+                # TODO - change this later
+                return HttpResponse("Invalid topic")
+            try:
+                post = Page.objects.get(slug=post_slug, topic=topic)
+            except:
+                # TODO - change this later
+                return HttpResponse("Invalid post")
+            # Toggle the likes - (could use get_or_create here to simplify logic)
+            try:
+                pl = PostLike.objects.get(user=request.user, post=post)
+                # If liked vvv
+                pl.delete() # Please don't explode things
+            except:
+                # If not liked vvv
+                pl = PostLike(user=request.user, post=post)
+                pl.save()
+            # TODO - also change this to a reverse
+            return redirect(f"/mybase/topic/{topic.slug}/")

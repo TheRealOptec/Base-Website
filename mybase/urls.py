@@ -12,6 +12,6 @@ urlpatterns = [
     path('topic/<slug:topic_slug>/post/<slug:post_name_slug>', views.view_post, name='view_post'),
     path('topic/<slug:topic_slug>/post/<slug:post_name_slug>/like/', views.like_post, name='like_post'),
     path('topic/<slug:topic_slug>/make-post/', views.make_post, name='make_post'),
-
+    path('topic/<slug:topic_slug>/post/<slug:post_slug>/like-post/', views.toggle_like_post, name='toggle_like_post'),
     path('posting-guide/', views.posting_guide, name='posting_guide'),
 ]

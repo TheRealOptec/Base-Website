@@ -258,7 +258,7 @@
                                                 {% url 'mybase:like_post' topic.slug post.slug as post_like_url %}
                                                 <form
                                                     method="post"
-                                                    action="{% if post_like_url %}{{ post_like_url }}{% else %}/mybase/topic/{{ topic.slug }}/post/{{ post.slug }}/like/{% endif %}"
+                                                    action="/mybase/topic/{{ topic.slug }}/post/{{ post.slug }}/like-post/"
                                                     class="d-inline"
                                                 >
                                                     {% csrf_token %}
