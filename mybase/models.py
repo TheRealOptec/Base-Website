@@ -83,5 +83,15 @@ class PostLike(models.Model):
     class Meta:
         unique_together = ('user', 'post')
 
+    def save(self, *args, **kwargs):
+        self.post.likes += 1
+        self.post.save()
+        super(PostLike, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.post.likes -= 1
+        self.post.save()
+        super(PostLike, self).delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.user.username} likes {self.post.title}"
