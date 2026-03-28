@@ -13,6 +13,9 @@ from .searching.searching_handler import SearchingHandler
 from .searching.search_in_options import SearchIn
 from .searching.sort_by_options import SortBy
 
+def redirect_home(request):
+    return redirect(reverse("mybase:home"))
+
 def home(request):
     context_dict = {
         "static_css_path": settings.STATIC_CSS_URL
@@ -146,6 +149,9 @@ def view_post(request, topic_slug, post_name_slug):
     except:
         # TODO - remove this
         return HttpResponse("No such post exists")
+    # Increase view counts
+    post.views += 1
+    post.save()
     # If comment is being added then add comment
     if request.method == "POST":
         # Got help from: https://forum.djangoproject.com/t/how-to-get-current-user/10234/5
@@ -163,9 +169,13 @@ def view_post(request, topic_slug, post_name_slug):
 def view_topic(request, topic_slug):
     try:
         topic = Topic.objects.get(slug=topic_slug)
+        posts = Page.objects.filter(topic=topic).values()
     except:
         topic = None
-    posts = Page.objects.filter(topic=topic).values()
+        posts = None
+    if topic is not None:
+        topic.views += 1
+        topic.save()
     return render(request, 'mybase/topic.html', context={
         "topic": topic,
         "posts": posts
@@ -199,6 +209,7 @@ def make_post(request, topic_slug):
             title=request.POST.get('title', None),
             body=request.POST.get('body', "")
         )
+        post.author = request.user
         post.save()
         return render(request, 'mybase/make_post.html', context={
             "topic": topic
