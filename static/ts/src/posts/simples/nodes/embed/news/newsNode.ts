@@ -32,13 +32,20 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
         if(options === undefined) return;
         const articlesCount = (options["top"] === undefined) ? articlesArr.length : options["top"];
 
+        const listHead = document.createElement("ol");
+
         for(let i = 0; i < Math.min(articlesCount, articlesArr.length); i++) {
+            console.log("BUG!");
             const article = articlesArr[i];
-            const elem = document.createElement("a");
-            elem.innerHTML = article["title"];
-            elem.setAttribute("href", article["url"]); 
-            fragHead.appendChild(elem);
+            const liElem = document.createElement("li");
+            const aElem = document.createElement("a");
+            aElem.innerHTML = article["title"];
+            aElem.setAttribute("href", article["url"]); 
+            liElem.appendChild(aElem);
+            listHead.appendChild(liElem);
         }
+
+        fragHead.appendChild(listHead);
     }
 
     public compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void {

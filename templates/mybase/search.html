@@ -142,9 +142,8 @@
                                     {% endif %}
 
                                     <div class="d-flex flex-wrap gap-2">
-                                        <span class="badge bg-primary">Likes: {{ topic.total_likes|default:0 }}</span>
-                                        <span class="badge bg-dark">Views: {{ topic.total_views|default:0 }}</span>
-                                        <span class="badge bg-secondary">Comments: {{ topic.comment_count|default:0 }}</span>
+                                        <span class="badge bg-primary">Likes: {{ topic.likes|default:0 }}</span>
+                                        <span class="badge bg-dark">Views: {{ topic.views|default:0 }}</span>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -201,7 +200,7 @@
                                     </div>
 
                                     {% if post.body %}
-                                        <p class="text-muted mb-3">{{ post.body|truncatewords:30 }}</p>
+                                        <p class="text-muted mb-3 simplesEditor simplesin-{{ forloop.counter0 }} simplesout-{{ forloop.counter0 }}">{{ post.body }}</p>
                                     {% else %}
                                         <p class="text-muted mb-3">No preview available.</p>
                                     {% endif %}
@@ -223,4 +222,10 @@
 
     </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type="module" src="/static/js/posts/integration/StdSimplesIntegration.js"></script>
 {% endblock %}

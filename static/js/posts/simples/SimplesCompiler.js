@@ -18,8 +18,15 @@ export class SimplesCompiler {
     }
     static compile(content) {
         return __awaiter(this, void 0, void 0, function* () {
+            return this.compilePure(`<simples> ${content} </simples>`);
+        });
+    }
+    static compilePure(content) {
+        return __awaiter(this, void 0, void 0, function* () {
             // Reset promises
             this.promises = [];
+            // Clear error channel
+            this.stdErr.clearErrors();
             const frag = SimplesCompiler.interpretXML(document.createDocumentFragment(), SimplesParser.parse(content));
             yield Promise.all(this.promises);
             return frag;
@@ -58,6 +65,9 @@ export class SimplesCompiler {
     }
     static reportError(msg) {
         this.stdErr.reportError(msg);
+    }
+    static setStdError(errorChannel) {
+        this.stdErr = errorChannel;
     }
 }
 SimplesCompiler.compilerNodes = {};

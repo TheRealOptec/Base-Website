@@ -21,8 +21,14 @@ export class SimplesCompiler {
     }
 
     public static async compile(content: string): Promise<DocumentFragment> {
+        return this.compilePure(`<simples> ${content} </simples>`);
+    }
+
+    public static async compilePure(content: string): Promise<DocumentFragment> {
         // Reset promises
         this.promises = [];
+        // Clear error channel
+        this.stdErr.clearErrors();
 
         const frag = SimplesCompiler.interpretXML(
             document.createDocumentFragment(),
@@ -68,5 +74,9 @@ export class SimplesCompiler {
 
     public static reportError(msg: string): void {
         this.stdErr.reportError(msg);
+    }
+
+    public static setStdError(errorChannel: ISimplesErrorChannel): void {
+        this.stdErr = errorChannel;
     }
 }

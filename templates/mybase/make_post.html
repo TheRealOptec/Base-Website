@@ -5,7 +5,13 @@
 {% url 'sign_up' as sign_up_url %}
 
 {% block title %}
-    {% if topic %}Make Post - {{ topic.name }}{% else %}Make Post{% endif %}
+    {% if is_editing and post %}
+        Edit Post - {{ post.title }}
+    {% elif topic %}
+        Make Post - {{ topic.name }}
+    {% else %}
+        Make Post
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -17,7 +23,7 @@
         <!-- Topic info -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h2 class="h6 mb-3">Posting In</h2>
+                <h2 class="h6 mb-3">{% if is_editing %}Editing In{% else %}Posting In{% endif %}</h2>
 
                 {% if topic %}
                     <h3 class="h5 mb-2">{{ topic.name }}</h3>
@@ -29,6 +35,15 @@
                     {% endif %}
 
                     <div class="d-grid gap-2">
+                        {% if is_editing and post %}
+                            {% url 'mybase:view_post' topic.slug post.slug as post_detail_url %}
+                            <a
+                                href="{% if post_detail_url %}{{ post_detail_url }}{% else %}/mybase/topic/{{ topic.slug }}/post/{{ post.slug }}{% endif %}"
+                                class="btn btn-outline-primary btn-sm"
+                            >
+                                Back to Post
+                            </a>
+                        {% endif %}
                         {% url 'mybase:view_topic' topic.slug as topic_detail_url %}
                         <a
                             href="{% if topic_detail_url %}{{ topic_detail_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
@@ -72,14 +87,16 @@
             <div class="card-body">
 
                 <div class="mb-4">
-                    <h1 class="h3 mb-2">Make New Post</h1>
+                    <h1 class="h3 mb-2">{% if is_editing %}Edit Post{% else %}Make New Post{% endif %}</h1>
                     {% if topic %}
                         <p class="text-muted mb-0">
-                            Create a new post in
+                            {% if is_editing %}Update your post in{% else %}Create a new post in{% endif %}
                             <strong>{{ topic.name }}</strong>.
                         </p>
                     {% else %}
-                        <p class="text-muted mb-0">Create a new discussion post.</p>
+                        <p class="text-muted mb-0">
+                            {% if is_editing %}Update your discussion post.{% else %}Create a new discussion post.{% endif %}
+                        </p>
                     {% endif %}
                 </div>
 
@@ -87,119 +104,74 @@
                     <form method="post" enctype="multipart/form-data" data-simples-form>
                         {% csrf_token %}
 
-                        {% if post_form %}
-                            {{ post_form.non_field_errors }}
-
-                            <div class="mb-3">
-                                <label class="form-label" for="{{ post_form.title.id_for_label }}">Title</label>
-                                {{ post_form.title }}
-                                {% if post_form.title.errors %}
-                                    <div class="text-danger small mt-1">{{ post_form.title.errors }}</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label" for="{{ post_form.body.id_for_label }}">Post Content</label>
-                                <p class="helptext mb-3">
-                                    Write the raw Simples/XML source here, then switch to preview mode to check the compiled output. Press Tab to insert indentation in the editor.
-                                </p>
-
-                                <div class="simples-mode-switch mb-3" data-simples-toggle>
-                                    <button type="button" class="btn btn-primary btn-sm" data-simples-mode="edit" aria-pressed="true">
-                                        Edit Raw Simples
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-simples-mode="preview" aria-pressed="false">
-                                        Preview Output
-                                    </button>
-                                </div>
-
-                                <div data-simples-editor-panel>
-                                    {{ post_form.body }}
-                                    {% if post_form.body.errors %}
-                                        <div class="text-danger small mt-1">{{ post_form.body.errors }}</div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="simples-preview-panel d-none mt-3" data-simples-preview-panel>
-                                    <div class="simples-preview-surface" data-simples-preview-output>
-                                        <p class="text-muted mb-0">Preview your compiled post here.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {% if post_form.image %}
-                                <div class="mb-4">
-                                    <label class="form-label" for="{{ post_form.image.id_for_label }}">Image (optional)</label>
-                                    {{ post_form.image }}
-                                    {% if post_form.image.errors %}
-                                        <div class="text-danger small mt-1">{{ post_form.image.errors }}</div>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            <div class="mb-3">
-                                <label for="postTitle" class="form-label">Title</label>
-                                <input
-                                    type="text"
-                                    id="postTitle"
-                                    name="title"
-                                    class="form-control"
-                                    placeholder="Enter your post title"
-                                    required
-                                />
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="postBody" class="form-label">Post Content</label>
-                                <p class="helptext mb-3">
-                                    Write the raw Simples/XML source here, then switch to preview mode to check the compiled output. Press Tab to insert indentation in the editor.
-                                </p>
-
-                                <div class="simples-mode-switch mb-3" data-simples-toggle>
-                                    <button type="button" class="btn btn-primary btn-sm" data-simples-mode="edit" aria-pressed="true">
-                                        Edit Raw Simples
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-simples-mode="preview" aria-pressed="false">
-                                        Preview Output
-                                    </button>
-                                </div>
-
-                                <div data-simples-editor-panel>
-                                    <textarea
-                                        id="postBody"
-                                        name="body"
-                                        rows="8"
-                                        class="form-control"
-                                        placeholder="Write your post here..."
-                                        required
-                                    ></textarea>
-                                </div>
-
-                                <div class="simples-preview-panel d-none mt-3" data-simples-preview-panel>
-                                    <div class="simples-preview-surface" data-simples-preview-output>
-                                        <p class="text-muted mb-0">Preview your compiled post here.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="postImage" class="form-label">Image (optional)</label>
-                                <input
-                                    type="file"
-                                    id="postImage"
-                                    name="image"
-                                    class="form-control"
-                                    accept="image/*"
-                                >
+                        {% if post_form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ post_form.non_field_errors }}
                             </div>
                         {% endif %}
 
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ post_form.title.id_for_label }}">Title</label>
+                            {{ post_form.title }}
+                            {% if post_form.title.errors %}
+                                <div class="text-danger small mt-1">{{ post_form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" for="{{ post_form.body.id_for_label }}">Post Content</label>
+                            <p class="helptext mb-3">
+                                Write the raw Simples/XML source here, then switch to preview mode to check the compiled output. Press Tab to insert indentation in the editor.
+                            </p>
+
+                            <div class="simples-mode-switch mb-3" data-simples-toggle>
+                                <button type="button" class="btn btn-primary btn-sm" data-simples-mode="edit" aria-pressed="true">
+                                    Edit Raw Simples
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-simples-mode="preview" aria-pressed="false">
+                                    Preview Output
+                                </button>
+                            </div>
+
+                            <div data-simples-editor-panel>
+                                {{ post_form.body }}
+                                {% if post_form.body.errors %}
+                                    <div class="text-danger small mt-1">{{ post_form.body.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div
+                                class="alert alert-danger d-none mt-3"
+                                data-simples-error-panel
+                                role="alert"
+                                aria-live="polite"
+                            >
+                                <p class="fw-semibold mb-2">Simples errors</p>
+                                <ul class="mb-0 ps-3" data-simples-error-list></ul>
+                            </div>
+
+                            <div class="simples-preview-panel d-none mt-3" data-simples-preview-panel>
+                                <div class="simples-preview-surface simplesout-main" data-simples-preview-output>
+                                    <p class="text-muted mb-0">Preview your compiled post here.</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex flex-wrap gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send"></i> Submit Post
+                                <i class="bi {% if is_editing %}bi-save{% else %}bi-send{% endif %}"></i>
+                                {% if is_editing %}Save Changes{% else %}Submit Post{% endif %}
                             </button>
 
-                            {% if topic %}
+                            {% if is_editing and topic and post %}
+                                {% url 'mybase:view_post' topic.slug post.slug as cancel_post_url %}
+                                <a
+                                    href="{% if cancel_post_url %}{{ cancel_post_url }}{% else %}/mybase/topic/{{ topic.slug }}/post/{{ post.slug }}{% endif %}"
+                                    class="btn btn-outline-secondary"
+                                >
+                                    Cancel
+                                </a>
+                            {% elif topic %}
                                 {% url 'mybase:view_topic' topic.slug as cancel_topic_url %}
                                 <a
                                     href="{% if cancel_topic_url %}{{ cancel_topic_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
@@ -216,7 +188,11 @@
                     </form>
                 {% else %}
                     <div class="alert alert-warning mb-3">
-                        You need to log in before creating a post.
+                        {% if is_editing %}
+                            You need to log in before editing a post.
+                        {% else %}
+                            You need to log in before creating a post.
+                        {% endif %}
                     </div>
 
                     <div class="d-flex gap-2">
@@ -234,24 +210,20 @@
 {% block scripts %}
     {{ block.super }}
     <script type="module">
-        import {} from "{% static 'js/posts/simples/NodeInit.js' %}";
-        import { SimplesCompiler } from "{% static 'js/posts/simples/SimplesCompiler.js' %}";
+        import { integrateSimples } from "{% static 'js/posts/integration/CallableSimplesIntegration.js' %}";
+        import { ErrorPanelChannel } from "{% static 'js/posts/simples/error_handling/ErrorPanelChannel.js' %}";
 
         const postForm = document.querySelector("[data-simples-form]");
         const bodyInput = postForm?.querySelector("textarea[name='body']");
         const editorPanel = postForm?.querySelector("[data-simples-editor-panel]");
         const previewPanel = postForm?.querySelector("[data-simples-preview-panel]");
         const previewOutput = postForm?.querySelector("[data-simples-preview-output]");
+        const errorPanel = postForm?.querySelector("[data-simples-error-panel]");
+        const errorList = postForm?.querySelector("[data-simples-error-list]");
         const editButton = postForm?.querySelector("[data-simples-mode='edit']");
         const previewButton = postForm?.querySelector("[data-simples-mode='preview']");
 
-        function renderPlainText(source, target) {
-            target.innerHTML = "";
-            const paragraph = document.createElement("p");
-            paragraph.className = "simples-plain-text mb-0";
-            paragraph.textContent = source;
-            target.appendChild(paragraph);
-        }
+        const simplesStdErrChannel = new ErrorPanelChannel(errorList, errorPanel);
 
         function insertTabIndentation(event) {
             if (!bodyInput || event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) {
@@ -269,28 +241,18 @@
             bodyInput.selectionStart = bodyInput.selectionEnd = start + indentation.length;
         }
 
-        function renderPreview() {
-            if (!bodyInput || !previewOutput) {
-                return;
-            }
-
+        function renderPost() {
+            // Ensure bodyInput and previewOutput are defined
+            if (!bodyInput || !previewOutput) return;
+            // Get the source input
             const source = bodyInput.value.trim();
-            previewOutput.innerHTML = "";
-
+            // Check the source input is defined
             if (!source) {
                 previewOutput.innerHTML = '<p class="text-muted mb-0">Nothing to preview yet.</p>';
                 return;
             }
-
-            try {
-                if (source.startsWith("<simples")) {
-                    SimplesCompiler.compile(source).then(frag => previewOutput.appendChild(frag));
-                } else {
-                    renderPlainText(source, previewOutput);
-                }
-            } catch (error) {
-                renderPlainText(source, previewOutput);
-            }
+            // Compile and render the simples code
+            integrateSimples(true, simplesStdErrChannel);
         }
 
         function setMode(mode) {
@@ -309,7 +271,7 @@
             previewButton.setAttribute("aria-pressed", String(isPreview));
 
             if (isPreview) {
-                renderPreview();
+                renderPost();
             }
         }
 

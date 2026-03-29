@@ -23,7 +23,7 @@
 
                     <p class="text-muted small mb-2">
                         {% if post.author %}
-                            by {{ post.author.username|default:post.author }}
+                            by {{ post.author.username }}
                         {% else %}
                             by Unknown user
                         {% endif %}
@@ -78,6 +78,15 @@
                     {% endif %}
 
                     {% if user.is_authenticated and post and post.topic %}
+                        {% if user == post.author %}
+                            {% url 'mybase:edit_post' post.topic.slug post.slug as sidebar_edit_post_url %}
+                            <a
+                                href="{% if sidebar_edit_post_url %}{{ sidebar_edit_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/edit/{% endif %}"
+                                class="btn btn-outline-primary btn-sm"
+                            >
+                                Edit Post
+                            </a>
+                        {% endif %}
                         {% url 'mybase:make_post' post.topic.slug as sidebar_make_post_url %}
                         <a
                             href="{% if sidebar_make_post_url %}{{ sidebar_make_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/make-post/{% endif %}"
@@ -149,6 +158,36 @@
                             <span class="badge bg-dark">
                                 Views: {{ post.views|default:0 }}
                             </span>
+                            {% if user == post.author %}
+                                {% url 'mybase:edit_post' post.topic.slug post.slug as edit_post_url %}
+                                <a
+                                    href="{% if edit_post_url %}{{ edit_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/edit/{% endif %}"
+                                    class="btn btn-outline-secondary btn-sm"
+                                >
+                                    Edit Post
+                                </a>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                                {% url 'mybase:like_post' post.topic.slug post.slug as like_post_url %}
+                                <form
+                                    method="post"
+                                    action="{% if like_post_url %}{{ like_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/like/{% endif %}"
+                                    class="d-inline"
+                                >
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                                        {% if post.user_has_liked %}Unlike Post{% else %}Like Post{% endif %}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a
+                                    href="{{ login_url|default:'/login/' }}?next={{ request.get_full_path|urlencode }}"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+                                    Log in to like
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -236,33 +275,18 @@
                 <h2 class="h5 mb-3">Add Comment</h2>
 
                 {% if user.is_authenticated %}
-                    <form method="post" action="">
+                    <form method="post">
                         {% csrf_token %}
 
-                        {% if comment_form %}
-                            {{ comment_form.non_field_errors }}
+                        {{ comment_form.non_field_errors }}
 
-                            {% if comment_form.body %}
-                                <div class="mb-3">
-                                    <label class="form-label" for="{{ comment_form.body.id_for_label }}">Your Comment</label>
-                                    {{ comment_form.body }}
-                                    {% if comment_form.body.errors %}
-                                        <div class="text-danger small mt-1">{{ comment_form.body.errors }}</div>
-                                    {% endif %}
-                                </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ comment_form.body.id_for_label }}">Your Comment</label>
+                            {{ comment_form.body }}
+                            {% if comment_form.body.errors %}
+                                <div class="text-danger small mt-1">{{ comment_form.body.errors }}</div>
                             {% endif %}
-                        {% else %}
-                            <div class="mb-3">
-                                <label for="commentBody" class="form-label">Your Comment</label>
-                                <textarea
-                                    id="commentBody"
-                                    name="body"
-                                    rows="4"
-                                    class="form-control"
-                                    placeholder="Write your comment here..."
-                                ></textarea>
-                            </div>
-                        {% endif %}
+                        </div>
 
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-chat-dots"></i> Add Comment
