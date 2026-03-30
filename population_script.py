@@ -70,8 +70,9 @@ def add_user(username, password, bio):
     (user, created) = User.objects.get_or_create(username=username)
     if created:
         print("Creating a new user!")
-        user.password = password
-        user.save()
+
+    user.set_password(password)
+    user.save()
         
     profile, _ = UserProfile.objects.get_or_create(user=user)
     profile.bio = bio
@@ -97,12 +98,11 @@ def add_page(topic, title, body, author, views=0, likes=0):
     return p
 
 def add_top(name, description, views=0, likes=0):
-    (t,invalid) = Topic.objects.get_or_create(name=name)
-    if not invalid:
-        t.likes =likes
-        t.views = views
-        t.description = description
-        t.save()
+    (t, _) = Topic.objects.get_or_create(name=name)
+    t.likes = likes
+    t.views = views
+    t.description = description
+    t.save()
     return t
 
 if __name__ == '__main__':
