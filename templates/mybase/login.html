@@ -28,8 +28,8 @@
                 {% else %}
                     <form method="post" action="{% url 'user_login' %}">
                         {% csrf_token %}
-                        {% if request.GET.next or request.POST.next %}
-                            <input type="hidden" name="next" value="{{ request.GET.next|default:request.POST.next }}">
+                        {% if next_url %}
+                            <input type="hidden" name="next" value="{{ next_url }}">
                         {% endif %}
 
                         {{ form.non_field_errors }}

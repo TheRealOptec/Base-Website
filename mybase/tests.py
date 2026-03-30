@@ -216,6 +216,14 @@ class PostEditorTests(ForumTestCase):
 
 
 class FormFlowTests(ForumTestCase):
+    def test_make_topic_redirects_unauthenticated_users_to_login(self):
+        response = self.client.get(reverse('mybase:make_topic'))
+
+        self.assertRedirects(
+            response,
+            f"{reverse('user_login')}?next={reverse('mybase:make_topic')}",
+        )
+
     def test_sign_up_creates_profile_logs_user_in_and_redirects_home(self):
         response = self.client.post(
             reverse('sign_up'),
