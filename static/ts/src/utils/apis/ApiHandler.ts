@@ -15,6 +15,6 @@ export class ApiHandler {
     }
 
     public static async makeReq(params: Record<string, any> = {}): Promise<any> {
-        return fetch(this.createGetUrl(params))
+        return fetch(this.createGetUrl(params));
     }
 }

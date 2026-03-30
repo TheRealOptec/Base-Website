@@ -375,25 +375,29 @@ def posting_guide(request):
     return render(request, 'mybase/posting_guide.html', context={})
 
 def toggle_like_post(request, topic_slug, post_slug):
-    if request.method != "POST":
-        return redirect(reverse("mybase:view_topic", args=[topic_slug]))
-
-    if not request.user.is_authenticated:
-        return redirect(reverse("mybase:view_topic", args=[topic_slug]))
-
-    topic = _get_topic(topic_slug)
-    if topic is None:
-        return HttpResponse("Invalid topic", status=404)
-
-    post = _get_post(topic, post_slug)
-    if post is None:
-        return HttpResponse("Invalid post", status=404)
-
-    try:
-        post_like = PostLike.objects.get(user=request.user, post=post, topic=topic)
-        post_like.delete()
-    except:
-        post_like = PostLike(user=request.user, post=post, topic=topic)
-        post_like.save()
-
-    return redirect(reverse("mybase:view_topic", args=[topic.slug]))
+    # Ensure that this is a POST request - otherwise let it return a 404 not found
+    if request.method == "POST":
+        # Ensure user is authenticated
+        if request.user.is_authenticated:
+            # Attempt to get the the topic and post
+            try:
+                topic = Topic.objects.get(slug=topic_slug)
+            except Topic.DoesNotExist:
+                # TODO - change this later
+                return HttpResponse("Invalid topic")
+            try:
+                post = Page.objects.get(slug=post_slug, topic=topic)
+            except Page.DoesNotExist:
+                # TODO - change this later
+                return HttpResponse("Invalid post")
+            # Toggle the likes - (could use get_or_create here to simplify logic)
+            try:
+                pl = PostLike.objects.get(user=request.user, post=post, topic=topic)
+                # If liked vvv
+                pl.delete() # Please don't explode things
+            except PostLike.DoesNotExist:
+                # If not liked vvv
+                pl = PostLike(user=request.user, post=post, topic=topic)
+                pl.save()
+            # TODO - also change this to a reverse
+            return redirect(f"/mybase/topic/{topic.slug}/")

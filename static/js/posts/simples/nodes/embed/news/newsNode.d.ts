@@ -6,6 +6,7 @@ export declare class NewsNode extends CompNodeParent implements ISimplesNode {
     static getInstance(): ISimplesNode | null;
     private compileNewsNode;
     private static addRequestResults;
+    private static normaliseJsonOutput;
     compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void;
 }
 //# sourceMappingURL=newsNode.d.ts.map
