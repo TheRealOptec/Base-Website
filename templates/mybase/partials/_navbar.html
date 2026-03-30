@@ -65,10 +65,9 @@
                             <div class="site-filter-group mb-3">
                                 <label class="site-filter-group-label" for="siteSortBy">Sort By</label>
                                 <select class="form-select form-select-sm site-filter-select mt-2" id="siteSortBy" name="sort_by">
-                                    <option value="relevance" {% if request.GET.sort_by == 'relevance' or not request.GET.sort_by %}selected{% endif %}>Relevance</option>
                                     <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Newest</option>
                                     <option value="most_viewed" {% if request.GET.sort_by == 'most_viewed' %}selected{% endif %}>Most Viewed</option>
-                                    <option value="most_liked" {% if request.GET.sort_by == 'most_liked' %}selected{% endif %}>Most Liked</option>
+                                    <option value="most_liked" {% if request.GET.sort_by == 'most_liked' or request.GET.sort_by == 'relevance' or not request.GET.sort_by %}selected{% endif %}>Most Liked</option>
                                 </select>
                             </div>
 

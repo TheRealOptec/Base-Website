@@ -115,19 +115,10 @@ class UserProfileEditForm(forms.ModelForm):
             }
         ),
     )
-    pfp = forms.ImageField(
-        required=False,
-        widget=forms.ClearableFileInput(
-            attrs={
-                "class": "form-control",
-                "accept": "image/*",
-            }
-        ),
-    )
 
     class Meta:
         model = UserProfile
-        fields = ("pfp", "bio")
+        fields = ("bio",)
 
 
 class TopicForm(forms.ModelForm):

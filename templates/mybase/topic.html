@@ -215,20 +215,9 @@
                                     {% endif %}
                                 </div>
 
-                                <div class="row g-3 align-items-start">
-                                    <!-- Optional image -->
-                                    <div class="col-md-3">
-                                        {% if post.image %}
-                                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded">
-                                        {% else %}
-                                            <div class="border rounded text-center text-muted p-4 h-100 d-flex align-items-center justify-content-center">
-                                                Image (optional)
-                                            </div>
-                                        {% endif %}
-                                    </div>
-
+                                <div>
                                     <!-- Post preview -->
-                                    <div class="col-md-9">
+                                    <div>
                                         {% if post.body %}
                                             <div class="mb-3" data-topic-post-render>
                                                 <textarea class="d-none" data-topic-post-source aria-hidden="true">{{ post.body }}</textarea>
