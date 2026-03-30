@@ -10,12 +10,13 @@ class MyBaseSiteMapping {
      * The url to redirect the user to - will be relative to the mybase app base url
      */
     static redirect(url) {
-        window.location.href = `${MyBaseSiteMapping.MYBASE_URL}${url}`;
+        const normalizedUrl = url.replace(/^\/+/, "");
+        window.location.href = `${MyBaseSiteMapping.MYBASE_URL}${normalizedUrl}`;
     }
 }
 // The name of the my base django app
 MyBaseSiteMapping.MYBASE = "mybase";
 // The url for the mybase django app
-MyBaseSiteMapping.MYBASE_URL = `${window.location.hostname}/${MyBaseSiteMapping.MYBASE}/`;
+MyBaseSiteMapping.MYBASE_URL = `${window.location.origin}/${MyBaseSiteMapping.MYBASE}/`;
 export {};
 //# sourceMappingURL=MyBaseSiteMapping.js.map

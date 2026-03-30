@@ -38,7 +38,7 @@
                         {% if is_editing and post %}
                             {% url 'mybase:view_post' topic.slug post.slug as post_detail_url %}
                             <a
-                                href="{% if post_detail_url %}{{ post_detail_url }}{% else %}/mybase/topic/{{ topic.slug }}/post/{{ post.slug }}{% endif %}"
+                                href="{{ post_detail_url }}"
                                 class="btn btn-outline-primary btn-sm"
                             >
                                 Back to Post
@@ -46,12 +46,12 @@
                         {% endif %}
                         {% url 'mybase:view_topic' topic.slug as topic_detail_url %}
                         <a
-                            href="{% if topic_detail_url %}{{ topic_detail_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
+                            href="{{ topic_detail_url }}"
                             class="btn btn-outline-secondary btn-sm"
                         >
                             Back to Topic
                         </a>
-                        <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-outline-primary btn-sm">
+                        <a href="{{ home_url }}" class="btn btn-outline-primary btn-sm">
                             Home
                         </a>
                     </div>
@@ -166,7 +166,7 @@
                             {% if is_editing and topic and post %}
                                 {% url 'mybase:view_post' topic.slug post.slug as cancel_post_url %}
                                 <a
-                                    href="{% if cancel_post_url %}{{ cancel_post_url }}{% else %}/mybase/topic/{{ topic.slug }}/post/{{ post.slug }}{% endif %}"
+                                    href="{{ cancel_post_url }}"
                                     class="btn btn-outline-secondary"
                                 >
                                     Cancel
@@ -174,13 +174,13 @@
                             {% elif topic %}
                                 {% url 'mybase:view_topic' topic.slug as cancel_topic_url %}
                                 <a
-                                    href="{% if cancel_topic_url %}{{ cancel_topic_url }}{% else %}/mybase/topic/{{ topic.slug }}/{% endif %}"
+                                    href="{{ cancel_topic_url }}"
                                     class="btn btn-outline-secondary"
                                 >
                                     Cancel
                                 </a>
                             {% else %}
-                                <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-outline-secondary">
+                                <a href="{{ home_url }}" class="btn btn-outline-secondary">
                                     Cancel
                                 </a>
                             {% endif %}
@@ -196,8 +196,8 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <a href="{{ login_url|default:'/login/' }}" class="btn btn-outline-primary">Log In</a>
-                        <a href="{{ sign_up_url|default:'/sign-up/' }}" class="btn btn-success">Sign Up</a>
+                        <a href="{{ login_url }}" class="btn btn-outline-primary">Log In</a>
+                        <a href="{{ sign_up_url }}" class="btn btn-success">Sign Up</a>
                     </div>
                 {% endif %}
 

@@ -34,7 +34,7 @@
                         <p class="small mb-3">
                             Topic:
                             <a
-                                href="{% if post_topic_url %}{{ post_topic_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/{% endif %}"
+                                href="{{ post_topic_url }}"
                                 class="text-decoration-none"
                             >
                                 {{ post.topic.name }}
@@ -65,12 +65,12 @@
                 <h2 class="h6 mb-3">Navigation</h2>
 
                 <div class="d-grid gap-2">
-                    <a href="{{ home_url|default:'/mybase/' }}" class="btn btn-outline-primary btn-sm">Home</a>
+                    <a href="{{ home_url }}" class="btn btn-outline-primary btn-sm">Home</a>
 
                     {% if post and post.topic %}
                         {% url 'mybase:view_topic' post.topic.slug as sidebar_topic_url %}
                         <a
-                            href="{% if sidebar_topic_url %}{{ sidebar_topic_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/{% endif %}"
+                            href="{{ sidebar_topic_url }}"
                             class="btn btn-outline-secondary btn-sm"
                         >
                             Back to Topic
@@ -81,7 +81,7 @@
                         {% if user == post.author %}
                             {% url 'mybase:edit_post' post.topic.slug post.slug as sidebar_edit_post_url %}
                             <a
-                                href="{% if sidebar_edit_post_url %}{{ sidebar_edit_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/edit/{% endif %}"
+                                href="{{ sidebar_edit_post_url }}"
                                 class="btn btn-outline-primary btn-sm"
                             >
                                 Edit Post
@@ -89,7 +89,7 @@
                         {% endif %}
                         {% url 'mybase:make_post' post.topic.slug as sidebar_make_post_url %}
                         <a
-                            href="{% if sidebar_make_post_url %}{{ sidebar_make_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/make-post/{% endif %}"
+                            href="{{ sidebar_make_post_url }}"
                             class="btn btn-primary btn-sm"
                         >
                             Make New Post
@@ -110,7 +110,7 @@
                             {% url 'mybase:view_topic' t.slug as top_topic_url %}
                             <li class="list-group-item px-0">
                                 <a
-                                    href="{% if top_topic_url %}{{ top_topic_url }}{% else %}/mybase/topic/{{ t.slug }}/{% endif %}"
+                                    href="{{ top_topic_url }}"
                                     class="text-decoration-none"
                                 >
                                     {{ t.name }}
@@ -161,7 +161,7 @@
                             {% if user == post.author %}
                                 {% url 'mybase:edit_post' post.topic.slug post.slug as edit_post_url %}
                                 <a
-                                    href="{% if edit_post_url %}{{ edit_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/edit/{% endif %}"
+                                    href="{{ edit_post_url }}"
                                     class="btn btn-outline-secondary btn-sm"
                                 >
                                     Edit Post
@@ -171,7 +171,7 @@
                                 {% url 'mybase:like_post' post.topic.slug post.slug as like_post_url %}
                                 <form
                                     method="post"
-                                    action="{% if like_post_url %}{{ like_post_url }}{% else %}/mybase/topic/{{ post.topic.slug }}/post/{{ post.slug }}/like/{% endif %}"
+                                    action="{{ like_post_url }}"
                                     class="d-inline"
                                 >
                                     {% csrf_token %}
@@ -182,7 +182,7 @@
                                 </form>
                             {% else %}
                                 <a
-                                    href="{{ login_url|default:'/login/' }}?next={{ request.get_full_path|urlencode }}"
+                                    href="{% url 'user_login' %}?next={{ request.get_full_path|urlencode }}"
                                     class="btn btn-outline-primary btn-sm"
                                 >
                                     Log in to like
@@ -294,7 +294,7 @@
                     </form>
                 {% else %}
                     <p class="text-muted mb-3">You need to log in to add a comment.</p>
-                    <a href="{{ login_url|default:'/login/' }}" class="btn btn-outline-primary btn-sm">Log In</a>
+                    <a href="{{ login_url }}" class="btn btn-outline-primary btn-sm">Log In</a>
                 {% endif %}
             </div>
         </div>

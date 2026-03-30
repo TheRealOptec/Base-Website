@@ -1,5 +1,6 @@
 from .search_in_options import SearchIn
 from .sort_by_options import SortBy
+from django.db.models import Count
 
 from mybase.models import Topic,Page
 
@@ -15,12 +16,17 @@ class SearchingHandler:
     def search(q, searchIn=SearchIn.ALL(), sortBy=SortBy.MOST_LIKED):
         # Search
         # Adapted from: https://www.w3schools.com/django/django_queryset_filter.php
-        topics = None
-        posts = None
+        topics = Topic.objects.none()
+        posts = Page.objects.none()
         if SearchIn.getVal(searchIn, SearchIn.TOPICS_IX) > 0:
-            topics = Topic.objects.filter(name__icontains=q).values()
+            topics = Topic.objects.filter(name__icontains=q)
         if SearchIn.getVal(searchIn, SearchIn.POSTS_IX) > 0:
-            posts = Page.objects.filter(title__icontains=q).values()
+            posts = (
+                Page.objects
+                .filter(title__icontains=q)
+                .select_related("topic", "author")
+                .annotate(comment_count=Count("comment", distinct=True))
+            )
         # Sort
         posts = SearchingHandler.sort(posts, sortBy)
         topics = SearchingHandler.sort(topics, sortBy)
@@ -28,4 +34,3 @@ class SearchingHandler:
     
     def sort(data, sortBy):
         return SearchingHandler.sortFns[sortBy](data)
-

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
+from django.db.models import Count
 from mybase.forms import (
     CommentForm,
     LoginForm,
@@ -30,10 +31,29 @@ def _get_topic(topic_slug):
 
 
 def _get_post(topic, post_slug):
-    try:
-        return Page.objects.get(topic=topic, slug=post_slug)
-    except Page.DoesNotExist:
-        return None
+    return (
+        Page.objects
+        .filter(topic=topic, slug=post_slug)
+        .select_related("author", "topic")
+        .order_by("-id")
+        .first()
+    )
+
+
+def _annotate_posts(posts):
+    return posts.select_related("author", "topic").annotate(
+        comment_count=Count("comment", distinct=True)
+    )
+
+
+def _topic_lists_context(limit=5):
+    return {
+        "top_liked_topics": Topic.objects.order_by("-likes", "name")[:limit],
+        "top_viewed_topics": Topic.objects.order_by("-views", "name")[:limit],
+        "most_commented_topics": Topic.objects.annotate(
+            comment_count=Count("page__comment", distinct=True)
+        ).order_by("-comment_count", "name")[:limit],
+    }
 
 
 def _render_post_form(request, topic, post_form, post=None):
@@ -62,15 +82,17 @@ def home(request):
         recent_topics = []
         recent_posts = []
     # Get most viewed and most liked topics
-    most_viewed_topic = Topic.objects.order_by("-views")[0]
-    most_liked_topic = Topic.objects.order_by("-likes")[0]
+    most_viewed_topic = Topic.objects.order_by("-views").first()
+    most_liked_topic = Topic.objects.order_by("-likes").first()
+    newest_topic = Topic.objects.order_by("-created_at").first()
     # Render home page
     context_dict = {
         "static_css_path": settings.STATIC_CSS_URL,
         "recent_topics": recent_topics,
         "recent_posts": recent_posts,
         "most_viewed_topic": most_viewed_topic,
-        "most_liked_topic": most_liked_topic
+        "most_liked_topic": most_liked_topic,
+        "newest_topic": newest_topic,
     }
     return render(request, 'mybase/home.html', context=context_dict)
 
@@ -158,32 +180,49 @@ def edit_user_profile(request):
 def view_profile(request, username):
     try:
         user = User.objects.get(username=username)
-        user_profile = UserProfile.objects.get(user=user)
-    except UserProfile.DoesNotExist | User.DoesNotExist:
-        user_profile = None
+    except User.DoesNotExist:
         user = None
+        user_profile = None
+    else:
+        user_profile = UserProfile.objects.filter(user=user).first()
+
+    if user is not None:
+        user_posts = list(
+            _annotate_posts(Page.objects.filter(author=user).order_by("-created_at"))[:10]
+        )
+        post_count = Page.objects.filter(author=user).count()
+        comment_count = Comment.objects.filter(author=user).count()
+        like_count = PostLike.objects.filter(post__author=user).count()
+    else:
+        user_posts = []
+        post_count = 0
+        comment_count = 0
+        like_count = 0
+
     return render(request, 'mybase/profile.html', context={
         "profile": user_profile,
-        "profile_user": user
+        "profile_user": user,
+        "user_posts": user_posts,
+        "post_count": post_count,
+        "comment_count": comment_count,
+        "like_count": like_count,
     })
 
 def view_post(request, topic_slug, post_name_slug):
     # Get this topic and post
-    try:
-        topic = Topic.objects.get(slug=topic_slug)
-    except:
-        # TODO - remove this
-        return HttpResponse("No such topic exist")
-    try:
-        post = Page.objects.get(topic=topic, slug=post_name_slug)
-    except:
-        # TODO - remove this
-        return HttpResponse("No such post exists")
+    topic = _get_topic(topic_slug)
+    if topic is None:
+        return HttpResponse("No such topic exist", status=404)
+
+    post = _get_post(topic, post_name_slug)
+    if post is None:
+        return HttpResponse("No such post exists", status=404)
+
     comment_form = CommentForm()
 
     # Increase view counts
     post.views += 1
-    post.save()
+    post.save(update_fields=["views"])
     # Add post history (if valid)
     if request.user.is_authenticated:
         post_history = PostHistory(user=request.user, post=post)
@@ -205,25 +244,28 @@ def view_post(request, topic_slug, post_name_slug):
         "post": post,
         "comments": comments,
         "comment_form": comment_form,
+        "top_topics": Topic.objects.order_by("-likes", "-views", "name")[:5],
     })
 
-@login_required(login_url='/login/')
+@login_required(login_url='user_login')
 def like_post(request, topic_slug, post_name_slug):
     if request.method != "POST":
         return redirect(reverse("mybase:view_topic", args=[topic_slug]))
 
-    try:
-        topic = Topic.objects.get(slug=topic_slug)
-        post = Page.objects.get(topic=topic, slug=post_name_slug)
-        existing_like = PostLike.objects.filter(user=request.user, post=post, topic=topic).first()
-        if existing_like:
-            existing_like.delete()
-        else:
-            PostLike.objects.create(user=request.user, post=post, topic=topic)
-        post.likes = PostLike.objects.filter(post=post).count()
-        post.save(update_fields=['likes'])
-    except:
+    topic = _get_topic(topic_slug)
+    post = _get_post(topic, post_name_slug) if topic is not None else None
+
+    if topic is None or post is None:
         return redirect(reverse("mybase:home"))
+
+    existing_like = PostLike.objects.filter(user=request.user, post=post, topic=topic).first()
+    if existing_like:
+        existing_like.delete()
+    else:
+        PostLike.objects.create(user=request.user, post=post, topic=topic)
+
+    post.likes = PostLike.objects.filter(post=post).count()
+    post.save(update_fields=['likes'])
 
     next_url = request.POST.get("next", "")
     if next_url.startswith('/'):
@@ -233,33 +275,34 @@ def like_post(request, topic_slug, post_name_slug):
 
 def view_topic(request, topic_slug):
     # Attempt to get the topic from the slug
-    try:
-        topic = Topic.objects.get(slug=topic_slug)
-    except:
-        topic = None
+    topic = _get_topic(topic_slug)
     # If a topic was found
     if topic is not None:
         # Add a view
         topic.views += 1
-        topic.save()
+        topic.save(update_fields=["views"])
         # Add topic history to user (if valid)
         if request.user.is_authenticated:
             topic_history = TopicHistory(topic=topic, user=request.user)
             topic_history.save()
-        # Get posts as list
-        posts = list(Page.objects.filter(topic=topic).values())
+        # Get posts as objects so templates can use related fields consistently
+        posts = list(_annotate_posts(Page.objects.filter(topic=topic).order_by("-created_at")))
 
         # Get likes
         if request.user.is_authenticated:
-            # Set whether or not the user has liked the post
+            liked_post_ids = set(
+                PostLike.objects.filter(user=request.user, post__topic=topic)
+                .values_list("post_id", flat=True)
+            )
             for post in posts:
-                post["user_has_liked"] = PostLike.objects.filter(user=request.user, post=post["id"]).exists()
+                post.user_has_liked = post.id in liked_post_ids
         return render(request, 'mybase/topic.html', context={
             "topic": topic,
-            "posts": posts
+            "posts": posts,
+            **_topic_lists_context(),
         })
     # TODO - change this
-    return HttpResponse("Invalid topic")
+    return HttpResponse("Invalid topic", status=404)
 
 @login_required
 def make_topic(request):
@@ -337,15 +380,13 @@ def toggle_like_post(request, topic_slug, post_slug):
     if not request.user.is_authenticated:
         return redirect(reverse("mybase:view_topic", args=[topic_slug]))
 
-    try:
-        topic = Topic.objects.get(slug=topic_slug)
-    except:
-        return HttpResponse("Invalid topic")
+    topic = _get_topic(topic_slug)
+    if topic is None:
+        return HttpResponse("Invalid topic", status=404)
 
-    try:
-        post = Page.objects.get(slug=post_slug, topic=topic)
-    except:
-        return HttpResponse("Invalid post")
+    post = _get_post(topic, post_slug)
+    if post is None:
+        return HttpResponse("Invalid post", status=404)
 
     try:
         post_like = PostLike.objects.get(user=request.user, post=post, topic=topic)

@@ -14,7 +14,8 @@ class Topic(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        self.created_at = timezone.now()
+        if self.created_at is None:
+            self.created_at = timezone.now()
         super(Topic, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -34,7 +35,8 @@ class Page(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
-        self.created_at = timezone.now()
+        if self.created_at is None:
+            self.created_at = timezone.now()
         super(Page, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -87,7 +89,8 @@ class Comment(models.Model):
 
     def save(self, *args, **kwargs):
         # Got datetime stuff from: https://stackoverflow.com/questions/415511/how-do-i-get-the-current-time-in-python
-        self.created_at = timezone.now()
+        if self.created_at is None:
+            self.created_at = timezone.now()
         super(Comment, self).save(*args, **kwargs)
 
     def __str__(self):

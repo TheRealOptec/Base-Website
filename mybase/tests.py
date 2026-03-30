@@ -329,7 +329,12 @@ class BackendInteractionTests(ForumTestCase):
         self.assertEqual(self.topic.views, 1)
         self.assertTrue(TopicHistory.objects.filter(user=self.other_user, topic=self.topic).exists())
         self.assertEqual(len(response.context['posts']), 1)
-        self.assertTrue(response.context['posts'][0]['user_has_liked'])
+        self.assertTrue(response.context['posts'][0].user_has_liked)
+        self.assertContains(
+            response,
+            reverse('mybase:toggle_like_post', args=[self.topic.slug, self.post.slug]),
+        )
+        self.assertContains(response, self.author.username)
 
     def test_home_lists_recent_topics_and_posts_from_history(self):
         self.login(self.other_user)
@@ -343,6 +348,31 @@ class BackendInteractionTests(ForumTestCase):
         self.assertIn(self.post, response.context['recent_posts'])
         self.assertContains(response, self.topic.name)
         self.assertContains(response, self.post.title)
+
+    def test_search_results_include_named_topic_and_post_links(self):
+        response = self.client.get(
+            reverse('mybase:search'),
+            {'q': 'Original', 'search_in': 'all', 'sort_by': 'most_liked'},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse('mybase:view_topic', args=[self.topic.slug]))
+        self.assertContains(response, reverse('mybase:view_post', args=[self.topic.slug, self.post.slug]))
+        self.assertEqual(response.context['post_results'][0].topic, self.topic)
+        self.assertEqual(response.context['post_results'][0].author, self.author)
+
+    def test_view_profile_includes_stats_and_recent_post_links(self):
+        Comment.objects.create(author=self.author, post=self.post, body='Profile comment')
+        PostLike.objects.create(user=self.other_user, post=self.post, topic=self.topic)
+
+        response = self.client.get(reverse('view_profile', args=[self.author.username]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['post_count'], 1)
+        self.assertEqual(response.context['comment_count'], 1)
+        self.assertEqual(response.context['like_count'], 1)
+        self.assertContains(response, reverse('mybase:view_post', args=[self.topic.slug, self.post.slug]))
+        self.assertContains(response, reverse('mybase:view_topic', args=[self.topic.slug]))
 
     def test_saved_timestamps_are_timezone_aware(self):
         comment = Comment.objects.create(author=self.other_user, post=self.post, body='Aware timestamp')
