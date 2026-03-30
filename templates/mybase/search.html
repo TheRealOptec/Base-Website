@@ -9,7 +9,7 @@
 
 {% block content %}
 {% firstof request.GET.search_in request.GET.searchIn 'all' as selected_search_in %}
-{% firstof request.GET.sort_by request.GET.sortBy 'relevance' as selected_sort_by %}
+{% firstof request.GET.sort_by request.GET.sortBy 'most_liked' as selected_sort_by %}
 <div class="row g-4">
 
     <!-- Sidebar -->
@@ -48,10 +48,8 @@
                                 Newest
                             {% elif selected_sort_by == 'most_viewed' %}
                                 Most Viewed
-                            {% elif selected_sort_by == 'most_liked' %}
-                                Most Liked
                             {% else %}
-                                Relevance
+                                Most Liked
                             {% endif %}
                         </span>
                     </div>

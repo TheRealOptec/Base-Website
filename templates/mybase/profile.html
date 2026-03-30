@@ -18,23 +18,9 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body text-center">
                 <div class="mb-3">
-                    {% if profile and profile.profile_picture %}
-                        <img
-                            src="{{ profile.profile_picture.url }}"
-                            alt="Profile picture"
-                            class="img-fluid rounded-circle profile-avatar"
-                        >
-                    {% elif profile and profile.pfp %}
-                        <img
-                            src="{{ profile.pfp.url }}"
-                            alt="Profile picture"
-                            class="img-fluid rounded-circle profile-avatar"
-                        >
-                    {% else %}
-                        <div class="border rounded-circle d-inline-flex align-items-center justify-content-center text-muted profile-avatar-placeholder">
-                            <i class="bi bi-person fs-1"></i>
-                        </div>
-                    {% endif %}
+                    <div class="border rounded-circle d-inline-flex align-items-center justify-content-center text-muted profile-avatar-placeholder">
+                        <i class="bi bi-person fs-1"></i>
+                    </div>
                 </div>
 
                 {% if profile_user %}

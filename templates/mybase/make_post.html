@@ -68,7 +68,6 @@
                 <ul class="small text-muted mb-3 ps-3">
                     <li>Use a clear and relevant title.</li>
                     <li>Keep your post respectful and on topic.</li>
-                    <li>Add an image only if it supports your post.</li>
                     <li>Avoid duplicate posts.</li>
                 </ul>
                 <a
@@ -101,7 +100,7 @@
                 </div>
 
                 {% if user.is_authenticated %}
-                    <form method="post" enctype="multipart/form-data" data-simples-form>
+                    <form method="post" data-simples-form>
                         {% csrf_token %}
 
                         {% if post_form.non_field_errors %}

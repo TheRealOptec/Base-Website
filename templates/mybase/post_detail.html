@@ -191,17 +191,6 @@
                         </div>
                     </div>
 
-                    <!-- Optional image -->
-                    <div class="mb-4">
-                        {% if post.image %}
-                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded shadow-sm">
-                        {% else %}
-                            <div class="border rounded text-center text-muted p-5">
-                                No image attached to this post.
-                            </div>
-                        {% endif %}
-                    </div>
-
                     <!-- Post body -->
                     <div class="mb-4">
                         {% if post.body %}
