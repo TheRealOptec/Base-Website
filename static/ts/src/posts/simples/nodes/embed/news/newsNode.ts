@@ -28,14 +28,13 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
     }
 
     private static addRequestResults(fragHead: Node, options: Record<string, string>|undefined, json: any): void {
-        const articlesArr = json["articles"];
+        const articlesArr = (json["articles"] === undefined) ? [] : json["articles"];
         if(options === undefined) return;
         const articlesCount = (options["top"] === undefined) ? articlesArr.length : options["top"];
 
         const listHead = document.createElement("ol");
 
         for(let i = 0; i < Math.min(articlesCount, articlesArr.length); i++) {
-            console.log("BUG!");
             const article = articlesArr[i];
             const liElem = document.createElement("li");
             const aElem = document.createElement("a");
@@ -46,6 +45,11 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
         }
 
         fragHead.appendChild(listHead);
+    }
+
+    private static normaliseJsonOutput(json: any): any {
+        if(json["articles"] === undefined) json["articles"] = [];
+        return json;
     }
 
     public compile(fragHead: Node, node: Node, params: Record<string, Record<string, string>>): void {
@@ -59,7 +63,7 @@ export class NewsNode extends CompNodeParent implements ISimplesNode {
         
         SimplesCompiler.addPromise(
             ApiHandler.makeReq(apiParams["req"])
-            .then(response => response.json())
+            .then(response => NewsNode.normaliseJsonOutput(response.json()))
             .then(json => NewsNode.addRequestResults(fragHead, apiParams["options"], json))
         );
     }
